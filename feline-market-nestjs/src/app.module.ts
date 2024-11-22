@@ -1,4 +1,5 @@
 import { Module, OnModuleInit } from '@nestjs/common';
+import dataSource, { dataSourceOptions } from 'db/data-source';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,16 +14,7 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USER_NAME,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      entities: [User],
-      synchronize: Boolean(process.env.DB_IS_SYNC),
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
 
 
