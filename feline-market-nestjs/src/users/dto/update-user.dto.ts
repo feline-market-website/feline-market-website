@@ -25,13 +25,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     message: 'Password must contain at least one letter and one number.',
   })
   readonly password?: string;
-
-  @IsOptional()
-  @IsArray()
-  @ArrayNotEmpty({ message: 'Role array must not be empty' })
-  @IsIn(['admin', 'vendor', 'customer'], {
-    each: true,
-    message: 'Role must be one of Admin, User, or Editor.',
-  })
-  readonly role?: string[];
 }
