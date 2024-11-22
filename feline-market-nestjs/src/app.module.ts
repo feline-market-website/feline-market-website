@@ -1,13 +1,12 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import dataSource, { dataSourceOptions } from 'db/data-source';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {ConfigModule} from "@nestjs/config";
 import { DataSource } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { dataSourceOptions } from 'db/data-source';
 
 @Module({
   imports: [
