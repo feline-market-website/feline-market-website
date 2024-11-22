@@ -7,7 +7,9 @@ import { validate } from 'uuid';
 
 @Injectable()
 export class RolesService {
-  constructor(@InjectRepository(Roles) private roleRepository: Repository<Roles>){}
+  constructor(
+    @InjectRepository(Roles) private roleRepository: Repository<Roles>,
+  ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<Roles> {
     return await this.roleRepository.save(createRoleDto);
@@ -19,16 +21,16 @@ export class RolesService {
 
   async findOne(id: string): Promise<Roles> {
     if (!validate(id)) {
-      throw new BadRequestException(`Invalid UUID format: ${id}`)
+      throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
-    return await this.roleRepository.findOneByOrFail({id: id});
+    return await this.roleRepository.findOneByOrFail({ id: id });
   }
 
   async remove(id: string): Promise<Roles> {
     if (!validate(id)) {
-      throw new BadRequestException(`Invalid UUID format: ${id}`)
+      throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
-    const role = await this.roleRepository.findOneByOrFail({id:id})
+    const role = await this.roleRepository.findOneByOrFail({ id: id });
     return await this.roleRepository.remove(role);
   }
 }
