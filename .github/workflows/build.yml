@@ -31,5 +31,5 @@ jobs:
       working-directory: ./feline-market-nestjs
 
     - name: Run format
-      run: npm format
+      run: npm run format
       working-directory: ./feline-market-nestjs
