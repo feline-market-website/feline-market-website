@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Role } from './entities/role.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'uuid';
 
 @Injectable()
 export class RoleService {
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  constructor(@InjectRepository(Role) private roleRepository: Repository<Role>){}
+
+  async create(createRoleDto: CreateRoleDto): Promise<Role> {
+    return await this.roleRepository.save(createRoleDto);
   }
 
-  findAll() {
-    return `This action returns all role`;
+  async findAll(): Promise<Role[]> {
+    return await this.roleRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async findOne(id: string): Promise<Role> {
+    if (!validate(id)) {
+      throw new BadRequestException(`Invalid UUID format: ${id}`)
+    }
+    return await this.roleRepository.findOneByOrFail({id: id});
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: string): Promise<Role> {
+    if (!validate(id)) {
+      throw new BadRequestException(`Invalid UUID format: ${id}`)
+    }
+    const role = await this.roleRepository.findOneByOrFail({id:id})
+    return await this.roleRepository.remove(role);
   }
 }
