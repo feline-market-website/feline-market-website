@@ -1,6 +1,10 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -11,7 +15,7 @@ import { validate } from 'uuid';
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -41,8 +45,8 @@ export class UsersService {
     if (!validate(id)) {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
-    
-    return await this.usersRepository.findOneByOrFail({id:id});
+
+    return await this.usersRepository.findOneByOrFail({ id: id });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
@@ -50,7 +54,7 @@ export class UsersService {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
 
-    const user = await this.usersRepository.findOneByOrFail({id:id});
+    const user = await this.usersRepository.findOneByOrFail({ id: id });
     const updatedUser = Object.assign(user, updateUserDto);
     return this.usersRepository.save(updatedUser);
   }
@@ -60,7 +64,7 @@ export class UsersService {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
 
-    const user = await this.usersRepository.findOneByOrFail({id:id})
+    const user = await this.usersRepository.findOneByOrFail({ id: id });
     return await this.usersRepository.remove(user);
   }
 }

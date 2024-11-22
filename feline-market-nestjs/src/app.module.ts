@@ -2,7 +2,7 @@ import { Module, OnModuleInit } from '@nestjs/common';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import {ConfigModule} from "@nestjs/config";
+import { ConfigModule } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
@@ -15,14 +15,12 @@ import { dataSourceOptions } from 'db/data-source';
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
-
-
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements OnModuleInit {
-  constructor(private dataSource:DataSource) {}
+  constructor(private dataSource: DataSource) {}
 
   async onModuleInit() {
     try {
