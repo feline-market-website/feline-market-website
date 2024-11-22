@@ -7,6 +7,7 @@ import { DataSource } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { dataSourceOptions } from 'db/data-source';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { dataSourceOptions } from 'db/data-source';
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
