@@ -4,10 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DataSource } from 'typeorm';
+import { RolesModule } from './roles/roles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { dataSourceOptions } from 'db/data-source';
-import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { RoleModule } from './role/role.module';
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
-    RoleModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

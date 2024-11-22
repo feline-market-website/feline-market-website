@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
-import { RoleService } from './role.service';
-import { CreateRoleDto } from './dto/create-role.dto';
+import { RolesService } from './roles.service';
+import { CreateRoleDto } from './dto/create-roles.dto';
 
 @Controller('role')
-export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+export class RolesController {
+  constructor(private readonly roleService: RolesService) {}
 
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
