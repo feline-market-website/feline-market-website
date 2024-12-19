@@ -6,7 +6,7 @@ FelineMarket is an commerce web application developed utilizing Next.js and Nest
 
 - ### Installation Requirements
 
-  - [Node.Js](https://nodejs.org/en)
+  - [Node.Js](https://nodejs.org/en/)
   - [Docker](https://www.docker.com/)
   - Text Editor: [vscode](https://code.visualstudio.com/)
 
