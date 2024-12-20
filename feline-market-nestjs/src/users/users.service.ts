@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -74,15 +75,21 @@ export class UsersService {
     return await this.usersRepository.findOneByOrFail({ id: id });
   }
 
-  async getUserWithRoles(id: string): Promise<User> {
-    if (!validate(id)) {
-      throw new BadRequestException(`Invalid UUID format: ${id}`);
+  async findUserWithRoles(id: string): Promise<any> {
+    try {
+      const user = await this.usersRepository.findOneOrFail({
+        where: { id },
+        relations: ['roles', 'roles.role'],
+      });
+  
+      // Transform roles into a simple array of role names
+      return {
+        ...user,
+        roles: user.roles.map(userRole => userRole.role.name),
+      };
+    } catch (error) {
+      throw new NotFoundException(`User with id ${id} not found: ${error}`);
     }
-
-    return this.usersRepository.findOneOrFail({
-      where: { id: id },
-      relations: ['roles', 'roles.role'],
-    });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {

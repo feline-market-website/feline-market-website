@@ -27,7 +27,7 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.getUserWithRoles(id);
+    return this.usersService.findUserWithRoles(id);
   }
 
   @Patch(':id')
