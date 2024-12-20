@@ -1,5 +1,5 @@
 import {
-  Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -22,6 +22,6 @@ export class UserRole {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   assign_at: Date;
 }

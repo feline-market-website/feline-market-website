@@ -1,26 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserRoleDto } from './dto/create-user-role.dto';
-import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRole } from './entities/user-role.entity';
+import { Repository } from 'typeorm';
+import { AssignRoleDto } from './dto/assign-role-dto';
+import {validate} from 'uuid'
+import { RemoveRoleDto } from './dto/remove-role-dto';
+
 
 @Injectable()
 export class UserRolesService {
-  create(createUserRoleDto: CreateUserRoleDto) {
-    return 'This action adds a new userRole';
+  constructor(
+    @InjectRepository(UserRole)
+    private readonly userRoleRepository: Repository<UserRole>,
+  ) {}
+
+  async assignRoleToUser(dto: AssignRoleDto): Promise<UserRole> {
+    const userRole = this.userRoleRepository.create({user: {id: dto.user_id}, role: {id: dto.role_id}})
+    return this.userRoleRepository.save(userRole);
   }
 
-  findAll() {
-    return `This action returns all userRoles`;
+  async getRoleForUser(userId: string): Promise<UserRole[]> {
+    if (!validate(userId)) {
+      throw new BadRequestException(`Invalid UUID format: ${userId}`);
+    }
+    return this.userRoleRepository.find({
+      where: {user: {id: userId}},
+      relations: ['roles'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userRole`;
-  }
-
-  update(id: number, updateUserRoleDto: UpdateUserRoleDto) {
-    return `This action updates a #${id} userRole`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userRole`;
+  async removeRoleFromUser(dto: RemoveRoleDto): Promise<UserRole> {
+    const userRole = this.userRoleRepository.create({user: {id: dto.user_id}, role: {id: dto.role_id}})
+    return this.userRoleRepository.remove(userRole);
   }
 }
