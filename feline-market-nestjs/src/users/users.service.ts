@@ -10,26 +10,51 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { validate } from 'uuid';
+import { Role } from 'src/roles/entities/roles.entity';
+import { UserRole } from 'src/user-roles/entities/user-role.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
+    @InjectRepository(UserRole) private readonly userRoleRepository: Repository<UserRole>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const { username, email, password } = createUserDto;
-
-      // Hash password event process in this section.
+  
+      // Step 1: Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
-
+  
+      // Step 2: Create the user
       const user = new User();
       user.username = username;
       user.email = email;
       user.password = hashedPassword;
-
-      return await this.usersRepository.save(user);
+  
+      const savedUser = await this.usersRepository.save(user);
+  
+      // Step 3: Find the "Customer" role
+      const customerRole = await this.roleRepository.findOne({
+        where: { name: 'customer' },
+      });
+  
+      if (!customerRole) {
+        throw new InternalServerErrorException('Customer role not found');
+      }
+  
+      // Step 4: Create UserRole
+      const userRole = this.userRoleRepository.create({
+        user: savedUser,
+        role: customerRole,
+      });
+  
+      // Step 5: Save UserRole
+      await this.userRoleRepository.save(userRole);
+  
+      return savedUser;
     } catch (error) {
       throw new InternalServerErrorException(
         `An unexpected error occurred: ${error.message}`,
@@ -47,6 +72,17 @@ export class UsersService {
     }
 
     return await this.usersRepository.findOneByOrFail({ id: id });
+  }
+
+  async getUserWithRoles(id: string): Promise<User> {
+    if (!validate(id)) {
+      throw new BadRequestException(`Invalid UUID format: ${id}`);
+    }
+
+    return this.usersRepository.findOneOrFail({
+      where: { id: id },
+      relations: ['roles', 'roles.role'],
+    });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
