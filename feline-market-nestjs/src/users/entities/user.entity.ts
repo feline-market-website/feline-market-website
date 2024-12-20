@@ -10,6 +10,7 @@ import {
 
 import { UserProfile } from 'src/user-profiles/entities/user-profile.entity';
 import { UserRole } from 'src/user-roles/entities/user-role.entity';
+import { Vendor } from 'src/vendors/entities/vendor.entity';
 
 @Entity('users')
 export class User {
@@ -36,4 +37,7 @@ export class User {
 
   @OneToOne(()=> UserProfile, userProfile=>userProfile.user)
   user_profile: UserProfile
+
+  @OneToOne(()=> Vendor, vendor=> vendor.user)
+  vendor: Vendor
 }
