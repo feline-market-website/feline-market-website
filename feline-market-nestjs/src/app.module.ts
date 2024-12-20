@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { dataSourceOptions } from 'db/data-source';
 import { UserRolesModule } from './user-roles/user-roles.module';
 import { UserProfilesModule } from './user-profiles/user-profiles.module';
+import { VendorsModule } from './vendors/vendors.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserProfilesModule } from './user-profiles/user-profiles.module';
     RolesModule,
     UserRolesModule,
     UserProfilesModule,
+    VendorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
