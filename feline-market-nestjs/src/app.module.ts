@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { dataSourceOptions } from 'db/data-source';
 import { UserRolesModule } from './user-roles/user-roles.module';
+import { UserProfilesModule } from './user-profiles/user-profiles.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserRolesModule } from './user-roles/user-roles.module';
     UsersModule,
     RolesModule,
     UserRolesModule,
+    UserProfilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
