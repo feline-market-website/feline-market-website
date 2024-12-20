@@ -32,12 +32,12 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  @OneToMany(() => UserRole, userRole => userRole.user)
+  @OneToMany(() => UserRole, userRole => userRole.user, {cascade: true})
   roles: UserRole[];
 
-  @OneToOne(()=> UserProfile, userProfile=>userProfile.user)
+  @OneToOne(()=> UserProfile, userProfile=>userProfile.user, {cascade: true})
   user_profile: UserProfile
 
-  @OneToOne(()=> Vendor, vendor=> vendor.user)
+  @OneToOne(()=> Vendor, vendor=> vendor.user, {cascade: true})
   vendor: Vendor
 }

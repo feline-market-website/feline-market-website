@@ -19,76 +19,88 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
-    @InjectRepository(UserRole) private readonly userRoleRepository: Repository<UserRole>,
+    @InjectRepository(UserRole)
+    private readonly userRoleRepository: Repository<UserRole>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const { username, email, password } = createUserDto;
-  
-      // Step 1: Hash password
+
+      // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
-  
-      // Step 2: Create the user
-      const user = new User();
-      user.username = username;
-      user.email = email;
-      user.password = hashedPassword;
-  
+
+      const user = this.usersRepository.create({
+        username,
+        email,
+        password: hashedPassword,
+      });
+
       const savedUser = await this.usersRepository.save(user);
-  
-      // Step 3: Find the "Customer" role
+
+      // Find "Customer" role
       const customerRole = await this.roleRepository.findOne({
         where: { name: 'customer' },
       });
-  
+
       if (!customerRole) {
         throw new InternalServerErrorException('Customer role not found');
       }
-  
-      // Step 4: Create UserRole
+
+      // Create UserRole
       const userRole = this.userRoleRepository.create({
         user: savedUser,
         role: customerRole,
       });
-  
-      // Step 5: Save UserRole
+
       await this.userRoleRepository.save(userRole);
-  
+
       return savedUser;
     } catch (error) {
       throw new InternalServerErrorException(
-        `An unexpected error occurred: ${error.message}`,
+        `An error occurred while creating the user: ${error.message}`,
       );
     }
   }
 
   async findAll(): Promise<User[]> {
-    return await this.usersRepository.find();
+    try {
+      return this.usersRepository.find({ relations: ['roles.role'] });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurring while find all users: ${error.message}`,
+      );
+    }
   }
 
   async findOne(id: string): Promise<User> {
+    try {
+      if (!validate(id)) {
+        throw new BadRequestException(`Invalid UUID format: ${id}`);
+      }
+
+      return this.usersRepository.findOneByOrFail({ id: id });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurring while find one the user: ${error.message}`,
+      );
+    }
+  }
+
+  async findUserWithRoles(id: string): Promise<User> {
     if (!validate(id)) {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
 
-    return await this.usersRepository.findOneByOrFail({ id: id });
-  }
-
-  async findUserWithRoles(id: string): Promise<any> {
     try {
-      const user = await this.usersRepository.findOneOrFail({
+      return this.usersRepository.findOneOrFail({
         where: { id },
-        relations: ['roles', 'roles.role'],
+        relations: ['roles.role'],
       });
-  
-      // Transform roles into a simple array of role names
-      return {
-        ...user,
-        roles: user.roles.map(userRole => userRole.role.name),
-      };
     } catch (error) {
-      throw new NotFoundException(`User with id ${id} not found: ${error}`);
+      throw new NotFoundException(
+        `An error occurred while get the user with role: ${error.message} `,
+      );
     }
   }
 
@@ -97,17 +109,31 @@ export class UsersService {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
 
-    const user = await this.usersRepository.findOneByOrFail({ id: id });
+    const user = await this.usersRepository.findOneByOrFail({ id });
     const updatedUser = Object.assign(user, updateUserDto);
-    return this.usersRepository.save(updatedUser);
+
+    try {
+      return await this.usersRepository.save(updatedUser);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while updating the user: ${error.message}`,
+      );
+    }
   }
 
-  async remove(id: string): Promise<User> {
+  async remove(id: string): Promise<void> {
     if (!validate(id)) {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
 
     const user = await this.usersRepository.findOneByOrFail({ id: id });
-    return await this.usersRepository.remove(user);
+
+    try {
+      await this.usersRepository.remove(user);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while deleting the user: ${error.message}`,
+      );
+    }
   }
 }
