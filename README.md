@@ -49,11 +49,11 @@ FelineMarket is an commerce web application developed utilizing Next.js and Nest
     npm install
     ```
 
-  - Start Database migrations
+  - Database migrations
 
     ```bash
     # This command use to generate migration files when schema has changed
-    npm run migration:generate
+    npm run migration:generate "db/migrations/<migration-name>"
     ```
 
     ```bash
