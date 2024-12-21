@@ -13,6 +13,6 @@ export class Role {
   @Column({ type: 'text' })
   description: string;
 
-  @OneToMany(() => UserRole, userRole => userRole.role)
+  @OneToMany(() => UserRole, userRole => userRole.role, {cascade: true})
   users: UserRole[];
 }
