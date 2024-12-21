@@ -2,6 +2,7 @@ import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,43 +24,61 @@ export class UserProfilesService {
     userId: string,
     dto: CreateUserProfileDto,
   ): Promise<UserProfile> {
-    const user = await this.userRepository.findOneByOrFail({
-      id: userId,
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
+    try {
+      const user = await this.userRepository.findOneByOrFail({
+        id: userId,
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const userProfile = this.userProfileRepository.create({
+        ...dto,
+        user,
+      });
+      return this.userProfileRepository.save(userProfile);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while creating user profile: ${error.message}`,
+      );
     }
-    const userProfile = this.userProfileRepository.create({
-      ...dto,
-      user,
-    });
-    return this.userProfileRepository.save(userProfile);
   }
 
   async getUserProfileById(userId: string): Promise<UserProfile> {
-    if (!validate(userId)) {
-      throw new BadRequestException(`Invalid uuid format: ${userId}}`);
+    try {
+      if (!validate(userId)) {
+        throw new BadRequestException(`Invalid uuid format: ${userId}}`);
+      }
+
+      return this.userProfileRepository.findOneOrFail({
+        where: { user: { id: userId } },
+        relations: ['user'],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while retrieving user profile by id: ${error.message}`,
+      );
     }
-    
-    return this.userProfileRepository.findOneOrFail({
-      where: { user: { id: userId } },
-      relations: ['user'],
-    });
   }
 
   async updateUserProfile(
     userId: string,
     dto: UpdateUserProfileDto,
   ): Promise<UserProfile> {
-    if (!validate(userId)) {
-      throw new BadRequestException(`Invalid uuid format: ${userId}}`);
+    try {
+      if (!validate(userId)) {
+        throw new BadRequestException(`Invalid uuid format: ${userId}}`);
+      }
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const userProfile = await this.getUserProfileById(userId);
+      Object.assign(userProfile, dto);
+      return this.userProfileRepository.save(userProfile);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while updating user profile: ${error.message}`,
+      );
     }
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    const userProfile = await this.getUserProfileById(userId);
-    Object.assign(userProfile, dto);
-    return this.userProfileRepository.save(userProfile);
   }
 }
