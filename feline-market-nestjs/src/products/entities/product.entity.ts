@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ProductImage } from 'src/product-images/entities/product-image.entity';
 import { Vendor } from 'src/vendors/entities/vendor.entity';
 
 @Entity('products')
@@ -29,6 +31,11 @@ export class Product {
   @ManyToOne(() => Vendor, (vendor) => vendor.products)
   @JoinColumn({ name: 'vendor_id' })
   vendor: Vendor;
+
+  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
+    cascade: true,
+  })
+  images: ProductImage[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

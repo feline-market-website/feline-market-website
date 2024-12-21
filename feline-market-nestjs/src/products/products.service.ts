@@ -43,7 +43,7 @@ export class ProductsService {
 
   async findAllProduct(): Promise<Product[]> {
     try {
-      return this.productRepository.find({ relations: ['vendor'] });
+      return this.productRepository.find({ relations: ['vendor', 'images'] });
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while retrieving all product: ${error.message}`,
@@ -58,7 +58,7 @@ export class ProductsService {
       }
       return this.productRepository.findOneOrFail({
         where: { id: productId },
-        relations: ['vendor'],
+        relations: ['vendor', 'images'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -67,7 +67,10 @@ export class ProductsService {
     }
   }
 
-  async updateProduct(productId: string, dto: UpdateProductDto): Promise<Product> {
+  async updateProduct(
+    productId: string,
+    dto: UpdateProductDto,
+  ): Promise<Product> {
     try {
       if (!validate(productId)) {
         throw new BadRequestException(`Invalid UUID format`);
