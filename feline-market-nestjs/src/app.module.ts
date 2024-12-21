@@ -11,6 +11,7 @@ import { dataSourceOptions } from 'db/data-source';
 import { UserRolesModule } from './user-roles/user-roles.module';
 import { UserProfilesModule } from './user-profiles/user-profiles.module';
 import { VendorsModule } from './vendors/vendors.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { VendorsModule } from './vendors/vendors.module';
     UserRolesModule,
     UserProfilesModule,
     VendorsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
