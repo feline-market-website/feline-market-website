@@ -13,6 +13,7 @@ import { UserProfilesModule } from './user-profiles/user-profiles.module';
 import { VendorsModule } from './vendors/vendors.module';
 import { ProductsModule } from './products/products.module';
 import { ProductImagesModule } from './product-images/product-images.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProductImagesModule } from './product-images/product-images.module';
     VendorsModule,
     ProductsModule,
     ProductImagesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
