@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -18,33 +20,43 @@ export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
 
   @Post(':userId')
+  @HttpCode(HttpStatus.OK)
   async create(
     @Param('userId') userId: string,
     @Body() dto: CreateVendorDto,
-  ): Promise<Vendor> {
-    return this.vendorsService.createVendor(userId, dto);
+  ): Promise<{message: string, data: Vendor}> {
+    const createdVendor = await this.vendorsService.createVendor(userId, dto);
+    return {message: `Vendor has created successfully`, data: createdVendor}
   }
 
   @Get()
-  async findAll(): Promise<Vendor[]> {
-    return this.vendorsService.findAllVendors();
+  @HttpCode(HttpStatus.OK)
+  async findAll(): Promise<{message: string, data: Vendor[]}> {
+    const vendors = await this.vendorsService.findAllVendors();
+    return {message: `Vendors have retrieved successfully`, data: vendors}
   }
 
   @Get(':vendorId')
-  async findOne(@Param('vendorId') vendorId: string): Promise<Vendor> {
-    return this.vendorsService.findOneVendorByVendorId(vendorId);
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('vendorId') vendorId: string): Promise<{message: string, data: Vendor}> {
+    const vendor = await this.vendorsService.findOneVendorByVendorId(vendorId);
+    return {message:`Vendor has retrieved successfully`, data: vendor}
   }
 
   @Patch(':vendorId')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('vendorId') vendorId: string,
     @Body() dto: UpdateVendorDto,
-  ): Promise<Vendor> {
-    return this.vendorsService.updateVendorByVendorId(vendorId, dto);
+  ): Promise<{message: string, data: Vendor}> {
+    const updatedVendor = await this.vendorsService.updateVendorByVendorId(vendorId, dto);
+    return {message: `Vendor has updated successfully`, data: updatedVendor}
   }
 
   @Delete(':vendorId')
-  async delete(@Param('vendorId') vendorId: string): Promise<Vendor> {
-    return this.vendorsService.deleteVendorByVendorId(vendorId);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('vendorId') vendorId: string): Promise<{message: string}> {
+    await this.vendorsService.deleteVendorByVendorId(vendorId);
+    return {message: `Vendor has deleted successfully`}
   }
 }

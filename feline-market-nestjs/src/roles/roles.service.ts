@@ -1,5 +1,9 @@
 import { CreateRoleDto } from './dto/create-roles.dto';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Role } from './entities/roles.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,25 +16,49 @@ export class RolesService {
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
-    return await this.roleRepository.save(createRoleDto);
+    try {
+      return await this.roleRepository.save(createRoleDto);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while creating a new role:  ${error.message}`,
+      );
+    }
   }
 
   async findAll(): Promise<Role[]> {
-    return await this.roleRepository.find();
+    try {
+      return await this.roleRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while retrieving all roles: ${error.message}`,
+      );
+    }
   }
 
   async findOne(id: string): Promise<Role> {
-    if (!validate(id)) {
-      throw new BadRequestException(`Invalid UUID format: ${id}`);
+    try {
+      if (!validate(id)) {
+        throw new BadRequestException(`Invalid UUID format: ${id}`);
+      }
+      return await this.roleRepository.findOneByOrFail({ id: id });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while retrieving one specific role: ${error.message}`,
+      );
     }
-    return await this.roleRepository.findOneByOrFail({ id: id });
   }
 
   async remove(id: string): Promise<Role> {
-    if (!validate(id)) {
-      throw new BadRequestException(`Invalid UUID format: ${id}`);
+    try {
+      if (!validate(id)) {
+        throw new BadRequestException(`Invalid UUID format: ${id}`);
+      }
+      const role = await this.roleRepository.findOneByOrFail({ id: id });
+      return await this.roleRepository.remove(role);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while removing a role: ${error.message}`,
+      );
     }
-    const role = await this.roleRepository.findOneByOrFail({ id: id });
-    return await this.roleRepository.remove(role);
   }
 }
