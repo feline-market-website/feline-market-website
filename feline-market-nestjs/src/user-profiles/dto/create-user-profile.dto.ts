@@ -1,6 +1,8 @@
-import { IsPhoneNumber, IsString, IsUrl, MaxLength, MinLength } from "class-validator";
+import { IsPhoneNumber, IsString, IsUUID, IsUrl, MaxLength, MinLength } from "class-validator";
 
 export class CreateUserProfileDto {
+    @IsUUID()
+    user_id: string;
     
     @IsString()
     @MaxLength(50)

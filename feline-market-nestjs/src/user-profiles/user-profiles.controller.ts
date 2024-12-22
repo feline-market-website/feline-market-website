@@ -18,42 +18,38 @@ import { UserProfile } from './entities/user-profile.entity';
 export class UserProfilesController {
   constructor(private readonly userProfilesService: UserProfilesService) {}
 
-  @Post(':userId')
+  @Post()
   @HttpCode(HttpStatus.OK)
   async create(
-    @Param('userId') userId: string,
     @Body() dto: CreateUserProfileDto,
   ): Promise<{ message: string; data: UserProfile }> {
-    const userProfile = await this.userProfilesService.createUserProfile(
-      userId,
-      dto,
-    );
+    const userProfile = await this.userProfilesService.createUserProfile(dto);
     return {
       message: `User Profile has created successfully`,
       data: userProfile,
     };
   }
 
-  @Get(':userId')
+  @Get(':userProfileId')
   @HttpCode(HttpStatus.OK)
   async findOne(
-    @Param('userId') userId: string,
+    @Param('userProfileId') userProfileId: string,
   ): Promise<{ message: string; data: UserProfile }> {
     const userProfile =
-      await this.userProfilesService.getUserProfileById(userId);
+      await this.userProfilesService.getUserProfileById(userProfileId);
     return {
       message: `User profile has retrieved successfully`,
       data: userProfile,
     };
   }
 
-  @Patch(':userId')
+  @Patch(':userProfileId')
   async update(
-    @Param('userId') userId: string,
+    @Param('userProfileId') userProfileId: string,
     @Body() dto: UpdateUserProfileDto,
   ): Promise<{ message: string; data: UserProfile }> {
     const updatedUserProfile = await this.userProfilesService.updateUserProfile(
-      userId,
+      userProfileId,
       dto,
     );
     return {

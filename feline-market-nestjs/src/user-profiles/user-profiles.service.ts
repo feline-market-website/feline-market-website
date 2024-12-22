@@ -3,7 +3,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,17 +19,11 @@ export class UserProfilesService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async createUserProfile(
-    userId: string,
-    dto: CreateUserProfileDto,
-  ): Promise<UserProfile> {
+  async createUserProfile(dto: CreateUserProfileDto): Promise<UserProfile> {
     try {
       const user = await this.userRepository.findOneByOrFail({
-        id: userId,
+        id: dto.user_id,
       });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
       const userProfile = this.userProfileRepository.create({
         ...dto,
         user,
@@ -43,14 +36,14 @@ export class UserProfilesService {
     }
   }
 
-  async getUserProfileById(userId: string): Promise<UserProfile> {
+  async getUserProfileById(userProfileId: string): Promise<UserProfile> {
     try {
-      if (!validate(userId)) {
-        throw new BadRequestException(`Invalid uuid format: ${userId}}`);
+      if (!validate(userProfileId)) {
+        throw new BadRequestException(`Invalid UUID format`);
       }
 
       return this.userProfileRepository.findOneOrFail({
-        where: { user: { id: userId } },
+        where: { id: userProfileId },
         relations: ['user'],
       });
     } catch (error) {
@@ -61,18 +54,14 @@ export class UserProfilesService {
   }
 
   async updateUserProfile(
-    userId: string,
+    userProfileId: string,
     dto: UpdateUserProfileDto,
   ): Promise<UserProfile> {
     try {
-      if (!validate(userId)) {
-        throw new BadRequestException(`Invalid uuid format: ${userId}}`);
+      if (!validate(userProfileId)) {
+        throw new BadRequestException(`Invalid uuid format: ${userProfileId}}`);
       }
-      const user = await this.userRepository.findOneBy({ id: userId });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      const userProfile = await this.getUserProfileById(userId);
+      const userProfile = await this.getUserProfileById(userProfileId);
       Object.assign(userProfile, dto);
       return this.userProfileRepository.save(userProfile);
     } catch (error) {
