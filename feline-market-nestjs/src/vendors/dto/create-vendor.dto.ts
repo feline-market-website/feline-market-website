@@ -1,6 +1,9 @@
-import { IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
+import { IsString, IsUUID, IsUrl, MaxLength, MinLength } from 'class-validator';
 
 export class CreateVendorDto {
+  @IsUUID()
+  user_id: string;
+
   @IsString()
   @MaxLength(50)
   @MinLength(5)
