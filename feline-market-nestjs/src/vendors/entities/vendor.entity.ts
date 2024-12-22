@@ -36,6 +36,6 @@ export class Vendor {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  @OneToMany(()=>Product, product=>product.vendor, {cascade: true})
+  @OneToMany(() => Product, (product) => product.vendor, { cascade: true })
   products: Product[];
 }

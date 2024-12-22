@@ -5,13 +5,13 @@ import { Optional } from '@nestjs/common';
 import { PartialType } from '@nestjs/mapped-types';
 
 export class UpdateOrderItemDto extends PartialType(CreateOrderItemDto) {
-        @IsInt()
-        @IsPositive()
-        @Optional()
-        quantity: number;
+  @IsInt()
+  @IsPositive()
+  @Optional()
+  quantity: number;
 
-        @IsNumber({maxDecimalPlaces: 2})
-        @IsPositive()
-        @Optional()
-        price: number;
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  @Optional()
+  price: number;
 }

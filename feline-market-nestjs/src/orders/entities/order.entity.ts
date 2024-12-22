@@ -31,7 +31,7 @@ export class Order {
   })
   status: 'Pending' | 'Completed' | 'Cancelled';
 
-  @OneToMany(()=>OrderItem, (orderItem)=>orderItem.order, { cascade: true})
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
   items: OrderItem[];
 
   @CreateDateColumn({ type: 'timestamp' })

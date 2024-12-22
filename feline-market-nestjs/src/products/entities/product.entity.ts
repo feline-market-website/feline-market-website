@@ -38,8 +38,10 @@ export class Product {
   })
   images: ProductImage[];
 
-  @OneToMany(()=>OrderItem, orderItem=>orderItem.product, {cascade: true})
-  items: OrderItem[]
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product, {
+    cascade: true,
+  })
+  items: OrderItem[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

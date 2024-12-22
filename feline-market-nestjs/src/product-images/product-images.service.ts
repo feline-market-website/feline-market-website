@@ -20,9 +20,7 @@ export class ProductImagesService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async createProductImage(
-    dto: CreateProductImageDto,
-  ): Promise<ProductImage> {
+  async createProductImage(dto: CreateProductImageDto): Promise<ProductImage> {
     try {
       const product = await this.productRepository.findOneByOrFail({
         id: dto.product_id,

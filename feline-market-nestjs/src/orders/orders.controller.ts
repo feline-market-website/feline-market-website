@@ -49,10 +49,7 @@ export class OrdersController {
     @Param('orderId') orderId: string,
     @Body() dto: UpdateOrderDto,
   ): Promise<{ message: string; data: Order }> {
-    const updatedOrder = await this.ordersService.updateOrder(
-      orderId,
-      dto,
-    );
+    const updatedOrder = await this.ordersService.updateOrder(orderId, dto);
     return { message: 'Order has updated successfully', data: updatedOrder };
   }
 
