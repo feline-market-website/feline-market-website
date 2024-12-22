@@ -1,9 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class RemoveRoleDto {
+export class CreateOrderDto {
   @IsUUID()
   user_id: string;
-
-  @IsUUID()
-  role_id: string;
 }

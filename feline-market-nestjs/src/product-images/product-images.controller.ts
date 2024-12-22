@@ -18,14 +18,13 @@ import { ProductImage } from './entities/product-image.entity';
 export class ProductImagesController {
   constructor(private readonly productImagesService: ProductImagesService) {}
 
-  @Post(':productId')
+  @Post()
   @HttpCode(HttpStatus.OK)
   async create(
-    @Param('productId') productId: string,
     @Body() dto: CreateProductImageDto,
   ): Promise<{ message: string; data: ProductImage }> {
     const createdProductImage =
-      await this.productImagesService.createProductImage(productId, dto);
+      await this.productImagesService.createProductImage(dto);
     return {
       message: 'Product image has created successfully',
       data: createdProductImage,

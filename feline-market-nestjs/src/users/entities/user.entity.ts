@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Order } from 'src/orders/entities/order.entity';
 import { UserProfile } from 'src/user-profiles/entities/user-profile.entity';
 import { UserRole } from 'src/user-roles/entities/user-role.entity';
 import { Vendor } from 'src/vendors/entities/vendor.entity';
@@ -32,12 +33,17 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  @OneToMany(() => UserRole, userRole => userRole.user, {cascade: true})
+  @OneToMany(() => UserRole, (userRole) => userRole.user, { cascade: true })
   roles: UserRole[];
 
-  @OneToOne(()=> UserProfile, userProfile=>userProfile.user, {cascade: true})
-  user_profile: UserProfile
+  @OneToOne(() => UserProfile, (userProfile) => userProfile.user, {
+    cascade: true,
+  })
+  user_profile: UserProfile;
 
-  @OneToOne(()=> Vendor, vendor=> vendor.user, {cascade: true})
-  vendor: Vendor
+  @OneToOne(() => Vendor, (vendor) => vendor.user, { cascade: true })
+  vendor: Vendor;
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

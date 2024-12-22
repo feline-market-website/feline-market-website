@@ -52,7 +52,7 @@ export class UserRolesService {
     try {
       const userRole = await this.userRoleRepository.findOneOrFail({
         where: { user: { id: dto.user_id }, role: { id: dto.role_id } },
-        relations: ['role', 'user']
+        relations: ['role', 'user'],
       });
       return this.userRoleRepository.remove(userRole);
     } catch (error) {

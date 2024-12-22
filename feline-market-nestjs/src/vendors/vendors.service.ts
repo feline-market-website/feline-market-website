@@ -20,12 +20,11 @@ export class VendorsService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async createVendor(userId: string, dto: CreateVendorDto): Promise<Vendor> {
+  async createVendor(dto: CreateVendorDto): Promise<Vendor> {
     try {
-      if (!validate(userId)) {
-        throw new BadRequestException('Invalid UUID format');
-      }
-      const user = await this.userRepository.findOneByOrFail({ id: userId });
+      const user = await this.userRepository.findOneByOrFail({
+        id: dto.user_id,
+      });
       const vendor = this.vendorRepository.create({
         ...dto,
         user,
@@ -69,9 +68,6 @@ export class VendorsService {
     dto: UpdateVendorDto,
   ): Promise<Vendor> {
     try {
-      if (!validate(vendorId)) {
-        throw new BadRequestException('Invalid UUID format');
-      }
       const vendor = await this.findOneVendorByVendorId(vendorId);
       Object.assign(vendor, dto);
       return this.vendorRepository.save(vendor);
@@ -84,16 +80,11 @@ export class VendorsService {
 
   async deleteVendorByVendorId(vendorId: string): Promise<Vendor> {
     try {
-      if (!validate(vendorId)) {
-        throw new BadRequestException('Invalid UUID format');
-      }
-      const vendor = await this.vendorRepository.findOneByOrFail({
-        id: vendorId,
-      });
+      const vendor = await this.findOneVendorByVendorId(vendorId);
       return this.vendorRepository.remove(vendor);
     } catch (error) {
       throw new InternalServerErrorException(
-        `An error occurred whie deleting vendor by id: ${error.message}`,
+        `An error occurred while deleting vendor by id: ${error.message}`,
       );
     }
   }

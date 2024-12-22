@@ -14,11 +14,11 @@ export class UserRole {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, user => user.roles)
+  @ManyToOne(() => User, (user) => user.roles)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Role, role => role.users)
+  @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
