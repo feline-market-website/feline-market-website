@@ -19,13 +19,12 @@ import { Vendor } from './entities/vendor.entity';
 export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
 
-  @Post(':userId')
+  @Post()
   @HttpCode(HttpStatus.OK)
   async create(
-    @Param('userId') userId: string,
     @Body() dto: CreateVendorDto,
   ): Promise<{message: string, data: Vendor}> {
-    const createdVendor = await this.vendorsService.createVendor(userId, dto);
+    const createdVendor = await this.vendorsService.createVendor(dto);
     return {message: `Vendor has created successfully`, data: createdVendor}
   }
 
