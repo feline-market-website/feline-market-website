@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity('orders')
@@ -28,6 +30,9 @@ export class Order {
     default: 'Pending',
   })
   status: 'Pending' | 'Completed' | 'Cancelled';
+
+  @OneToMany(()=>OrderItem, (orderItem)=>orderItem.order, { cascade: true})
+  items: OrderItem[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

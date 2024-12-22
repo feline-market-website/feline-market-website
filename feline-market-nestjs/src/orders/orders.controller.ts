@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -17,6 +19,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post(':userId')
+  @HttpCode(HttpStatus.OK)
   async create(
     @Param('userId') userId: string,
     @Body() dto: CreateOrderDto,
@@ -26,12 +29,14 @@ export class OrdersController {
   }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findAll(): Promise<{ message: string; data: Order[] }> {
     const orders = await this.ordersService.findAllOrders();
     return { message: 'Orders have retrieved successfully', data: orders };
   }
 
   @Get(':orderId')
+  @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('orderId') orderId: string,
   ): Promise<{ message: string; data: Order }> {
@@ -40,6 +45,7 @@ export class OrdersController {
   }
 
   @Patch(':orderId')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('orderId') orderId: string,
     @Body() updateOrderDto: UpdateOrderDto,
@@ -52,6 +58,7 @@ export class OrdersController {
   }
 
   @Delete(':orderId')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Param('orderId') orderId: string,
   ): Promise<{ message: string }> {
