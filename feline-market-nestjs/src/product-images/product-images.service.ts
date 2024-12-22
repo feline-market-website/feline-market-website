@@ -19,16 +19,13 @@ export class ProductImagesService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
   ) {}
+
   async createProductImage(
-    productId: string,
     dto: CreateProductImageDto,
   ): Promise<ProductImage> {
     try {
-      if (!validate(productId)) {
-        throw new BadRequestException(`Invalid UUID format`);
-      }
       const product = await this.productRepository.findOneByOrFail({
-        id: productId,
+        id: dto.product_id,
       });
       const productImage = this.productImageRepository.create({
         ...dto,
