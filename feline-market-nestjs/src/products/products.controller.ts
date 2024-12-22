@@ -8,10 +8,10 @@ import { Product } from './entities/product.entity';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post(':vendorId')
+  @Post()
   @HttpCode(HttpStatus.OK)
-  async create(@Param('vendorId') vendorId: string ,@Body() createProductDto: CreateProductDto): Promise<{message: string, data: Product}> {
-    const createdProduct = await this.productsService.createProduct(vendorId, createProductDto);
+  async create(@Body() dto: CreateProductDto): Promise<{message: string, data: Product}> {
+    const createdProduct = await this.productsService.createProduct(dto);
     return {message: 'Product has created successfully', data: createdProduct}
   }
 

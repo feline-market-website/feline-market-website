@@ -22,12 +22,11 @@ export class ProductsService {
   ) {}
 
   async createProduct(
-    vendorId: string,
     dto: CreateProductDto,
   ): Promise<Product> {
     try {
       const vendor = await this.vendorRepository.findOneByOrFail({
-        id: vendorId,
+        id: dto.vendor_id,
       });
       const product = this.productRepository.create({
         ...dto,
@@ -89,9 +88,7 @@ export class ProductsService {
 
   async removeProduct(productId: string): Promise<Product> {
     try {
-      const product = await this.productRepository.findOneByOrFail({
-        id: productId,
-      });
+      const product = await this.findOneProduct(productId)
       return this.productRepository.remove(product);
     } catch (error) {
       throw new InternalServerErrorException(
