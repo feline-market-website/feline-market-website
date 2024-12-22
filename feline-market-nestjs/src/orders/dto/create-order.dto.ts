@@ -1,8 +1,11 @@
-import { IsEnum, IsNumber, IsPositive } from 'class-validator';
+import { IsEnum, IsNumber, IsPositive, IsUUID } from 'class-validator';
 
 import { Optional } from '@nestjs/common';
 
 export class CreateOrderDto {
+  @IsUUID()
+  user_id: string;
+  
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   total_price: number;

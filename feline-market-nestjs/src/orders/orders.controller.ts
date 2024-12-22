@@ -21,10 +21,9 @@ export class OrdersController {
   @Post(':userId')
   @HttpCode(HttpStatus.OK)
   async create(
-    @Param('userId') userId: string,
     @Body() dto: CreateOrderDto,
   ): Promise<{ message: string; data: Order }> {
-    const createdOrder = await this.ordersService.createOrder(userId, dto);
+    const createdOrder = await this.ordersService.createOrder(dto);
     return { message: 'Order has created successfully', data: createdOrder };
   }
 
@@ -48,11 +47,11 @@ export class OrdersController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('orderId') orderId: string,
-    @Body() updateOrderDto: UpdateOrderDto,
+    @Body() dto: UpdateOrderDto,
   ): Promise<{ message: string; data: Order }> {
     const updatedOrder = await this.ordersService.updateOrder(
       orderId,
-      updateOrderDto,
+      dto,
     );
     return { message: 'Order has updated successfully', data: updatedOrder };
   }
