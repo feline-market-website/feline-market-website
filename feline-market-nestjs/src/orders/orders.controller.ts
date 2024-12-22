@@ -18,7 +18,7 @@ import { Order } from './entities/order.entity';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post(':userId')
+  @Post()
   @HttpCode(HttpStatus.OK)
   async create(
     @Body() dto: CreateOrderDto,

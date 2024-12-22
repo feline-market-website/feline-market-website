@@ -53,6 +53,7 @@ export class OrderItemsService {
       }
       return this.orderItemRepository.findOneOrFail({
         where: { id: orderItemId },
+        relations: ['order'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -80,7 +81,7 @@ export class OrderItemsService {
     try {
       const orderItem = await this.findOneOrderItem(orderItemId);
       const removedOrderItem = await this.orderItemRepository.remove(orderItem);
-      await this.orderService.updateOrderTotalPrice(orderItemId);
+      await this.orderService.updateOrderTotalPrice(orderItem.order.id);
       return removedOrderItem;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -89,3 +90,4 @@ export class OrderItemsService {
     }
   }
 }
+ 
