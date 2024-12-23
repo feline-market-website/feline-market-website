@@ -18,7 +18,7 @@ export class UserRolesService {
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async assignRoleToUser(dto: AssignRoleDto): Promise<UserRole> {
@@ -38,17 +38,20 @@ export class UserRolesService {
   async assignDefaultRoleToUser(userId: string): Promise<UserRole> {
     try {
       if (!validate(userId)) {
-        throw new BadRequestException('Invalid UUID format')
+        throw new BadRequestException('Invalid UUID format');
       }
-      const customerRole = await this.roleRepository.findOneByOrFail({name: 'customer'})
+      const customerRole = await this.roleRepository.findOneByOrFail({
+        name: 'customer',
+      });
       const userRole = this.userRoleRepository.create({
-        user: {id: userId},
-        role: customerRole
-      })
-      return this.userRoleRepository.save(userRole)
+        user: { id: userId },
+        role: customerRole,
+      });
+      return this.userRoleRepository.save(userRole);
     } catch (error) {
       throw new InternalServerErrorException(
-        `An error occurred while set default role to the user: ${error.message}`)
+        `An error occurred while set default role to the user: ${error.message}`,
+      );
     }
   }
 

@@ -47,8 +47,8 @@ export class CartItemsService {
         throw new BadRequestException('Invalid UUID format');
       }
       const cartItem = await this.cartItemRepository.findOneOrFail({
-        where: {id: cartItemId},
-        relations: ['cart', 'product']
+        where: { id: cartItemId },
+        relations: ['cart', 'product'],
       });
       return cartItem;
     } catch (error) {

@@ -31,7 +31,7 @@ export class CartsService {
   async findAllCarts(): Promise<Cart[]> {
     try {
       return this.cartRepository.find({
-        relations: ['cart_items.product']
+        relations: ['cart_items.product'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -46,7 +46,7 @@ export class CartsService {
         throw new BadRequestException(`Invalid UUID format`);
       }
       const cart = await this.cartRepository.findOneOrFail({
-        where: {id: cartId},
+        where: { id: cartId },
         relations: ['cart_items.product'],
       });
       return cart;
