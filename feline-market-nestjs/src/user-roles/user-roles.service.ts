@@ -10,12 +10,15 @@ import { Repository } from 'typeorm';
 import { AssignRoleDto } from './dto/assign-role-dto';
 import { validate } from 'uuid';
 import { RemoveRoleDto } from './dto/remove-role-dto';
+import { Role } from 'src/roles/entities/roles.entity';
 
 @Injectable()
 export class UserRolesService {
   constructor(
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>
   ) {}
 
   async assignRoleToUser(dto: AssignRoleDto): Promise<UserRole> {
@@ -32,14 +35,15 @@ export class UserRolesService {
     }
   }
 
-  async assignDefaultRoleToUser(userId: string) {
+  async assignDefaultRoleToUser(userId: string): Promise<UserRole> {
     try {
       if (!validate(userId)) {
         throw new BadRequestException('Invalid UUID format')
       }
+      const customerRole = await this.roleRepository.findOneByOrFail({name: 'customer'})
       const userRole = this.userRoleRepository.create({
         user: {id: userId},
-        role: {name: 'customer'}
+        role: customerRole
       })
       return this.userRoleRepository.save(userRole)
     } catch (error) {
