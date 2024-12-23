@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { CartItem } from 'src/cart-items/entities/cart-item.entity';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import { ProductImage } from 'src/product-images/entities/product-image.entity';
 import { Vendor } from 'src/vendors/entities/vendor.entity';
@@ -42,6 +43,9 @@ export class Product {
     cascade: true,
   })
   items: OrderItem[];
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product, { cascade: true })
+  cart_items: CartItem[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

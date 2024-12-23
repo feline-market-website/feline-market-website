@@ -2,11 +2,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { CartItem } from 'src/cart-items/entities/cart-item.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity('carts')
@@ -23,4 +25,7 @@ export class Cart {
 
   @UpdateDateColumn({ type: 'timestamp' })
   Updated_at: Date;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart, { cascade: true })
+  cart_items: CartItem[];
 }
