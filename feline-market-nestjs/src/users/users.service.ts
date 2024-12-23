@@ -13,6 +13,9 @@ import * as bcrypt from 'bcrypt';
 import { validate } from 'uuid';
 import { Role } from 'src/roles/entities/roles.entity';
 import { UserRole } from 'src/user-roles/entities/user-role.entity';
+import { CartsService } from 'src/carts/carts.service';
+import { UserProfilesService } from 'src/user-profiles/user-profiles.service';
+import { UserRolesService } from 'src/user-roles/user-roles.service';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +24,9 @@ export class UsersService {
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
+    private readonly cartsService: CartsService,
+    private readonly userProfilesService: UserProfilesService,
+    private readonly userRolesService: UserRolesService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -38,22 +44,14 @@ export class UsersService {
 
       const savedUser = await this.usersRepository.save(user);
 
-      // Find "Customer" role
-      const customerRole = await this.roleRepository.findOne({
-        where: { name: 'customer' },
+      // Set default role: "customer"
+      await this.userRolesService.assignDefaultRoleToUser(savedUser.id);
+      // Create User Profile to user
+      await this.userProfilesService.createUserProfile({
+        user_id: savedUser.id,
       });
-
-      if (!customerRole) {
-        throw new InternalServerErrorException('Customer role not found');
-      }
-
-      // Create UserRole
-      const userRole = this.userRoleRepository.create({
-        user: savedUser,
-        role: customerRole,
-      });
-
-      await this.userRoleRepository.save(userRole);
+      // Create Cart to user
+      await this.cartsService.createCart({ user_id: savedUser.id });
 
       return savedUser;
     } catch (error) {
@@ -105,14 +103,30 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    // Validate UUID format
     if (!validate(id)) {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
 
+    // Find the user by ID or throw an exception
     const user = await this.usersRepository.findOneByOrFail({ id });
-    const updatedUser = Object.assign(user, updateUserDto);
 
     try {
+      // Check if a new password is provided and hash it
+      let hashedPassword: string | undefined;
+      if (updateUserDto.password) {
+        hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+      }
+
+      // Merge the existing user data with the updates
+      const updatedData = {
+        ...updateUserDto,
+        ...(hashedPassword && { password: hashedPassword }), // Only include hashed password if provided
+      };
+
+      const updatedUser = Object.assign(user, updatedData);
+
+      // Save the updated user to the database
       return await this.usersRepository.save(updatedUser);
     } catch (error) {
       throw new InternalServerErrorException(
