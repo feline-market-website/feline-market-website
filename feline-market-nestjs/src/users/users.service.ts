@@ -11,7 +11,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { validate } from 'uuid';
-import { Role } from 'src/roles/entities/roles.entity';
 import { UserRole } from 'src/user-roles/entities/user-role.entity';
 import { CartsService } from 'src/carts/carts.service';
 import { UserProfilesService } from 'src/user-profiles/user-profiles.service';
@@ -21,7 +20,6 @@ import { UserRolesService } from 'src/user-roles/user-roles.service';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
-    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
     private readonly cartsService: CartsService,
