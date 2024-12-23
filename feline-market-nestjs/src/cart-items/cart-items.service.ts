@@ -18,7 +18,7 @@ export class CartItemsService {
   ) {}
   async addItemToCart(dto: CreateCartItemDto): Promise<CartItem> {
     try {
-      const item = await this.cartItemRepository.create({
+      const item = this.cartItemRepository.create({
         cart: { id: dto.cart_id },
         product: { id: dto.product_id },
         ...dto,
@@ -46,8 +46,9 @@ export class CartItemsService {
       if (!validate(cartItemId)) {
         throw new BadRequestException('Invalid UUID format');
       }
-      const cartItem = await this.cartItemRepository.findOneByOrFail({
-        id: cartItemId,
+      const cartItem = await this.cartItemRepository.findOneOrFail({
+        where: {id: cartItemId},
+        relations: ['cart', 'product']
       });
       return cartItem;
     } catch (error) {

@@ -25,7 +25,6 @@ export class UserProfilesService {
         id: dto.user_id,
       });
       const userProfile = this.userProfileRepository.create({
-        ...dto,
         user,
       });
       return this.userProfileRepository.save(userProfile);
