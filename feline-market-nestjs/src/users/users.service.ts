@@ -13,6 +13,9 @@ import * as bcrypt from 'bcrypt';
 import { validate } from 'uuid';
 import { Role } from 'src/roles/entities/roles.entity';
 import { UserRole } from 'src/user-roles/entities/user-role.entity';
+import { CartsService } from 'src/carts/carts.service';
+import { UserProfilesService } from 'src/user-profiles/user-profiles.service';
+import { UserRolesService } from 'src/user-roles/user-roles.service';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +24,9 @@ export class UsersService {
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
+    private readonly cartsService: CartsService,
+    private readonly userProfilesService: UserProfilesService,
+    private readonly userRolesService: UserRolesService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -38,22 +44,12 @@ export class UsersService {
 
       const savedUser = await this.usersRepository.save(user);
 
-      // Find "Customer" role
-      const customerRole = await this.roleRepository.findOne({
-        where: { name: 'customer' },
-      });
-
-      if (!customerRole) {
-        throw new InternalServerErrorException('Customer role not found');
-      }
-
-      // Create UserRole
-      const userRole = this.userRoleRepository.create({
-        user: savedUser,
-        role: customerRole,
-      });
-
-      await this.userRoleRepository.save(userRole);
+      // Set default role: "customer"
+      await this.userRolesService.assignDefaultRoleToUser(savedUser.id)
+      // Create User Profile to user
+      await this.userProfilesService.createUserProfile({user_id: savedUser.id})
+      // Create Cart to user
+      await this.cartsService.createCart({user_id: savedUser.id});
 
       return savedUser;
     } catch (error) {

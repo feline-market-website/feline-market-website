@@ -32,6 +32,22 @@ export class UserRolesService {
     }
   }
 
+  async assignDefaultRoleToUser(userId: string) {
+    try {
+      if (!validate(userId)) {
+        throw new BadRequestException('Invalid UUID format')
+      }
+      const userRole = this.userRoleRepository.create({
+        user: {id: userId},
+        role: {name: 'customer'}
+      })
+      return this.userRoleRepository.save(userRole)
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurred while set default role to the user: ${error.message}`)
+    }
+  }
+
   async getRoleForUser(userId: string): Promise<UserRole[]> {
     try {
       if (!validate(userId)) {
