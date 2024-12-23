@@ -5,28 +5,38 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserRole } from './entities/user-role.entity';
+import { UserRole, UserRoleEnum } from './entities/user-role.entity';
 import { Repository } from 'typeorm';
 import { AssignRoleDto } from './dto/assign-role-dto';
 import { validate } from 'uuid';
 import { RemoveRoleDto } from './dto/remove-role-dto';
-import { Role } from 'src/roles/entities/roles.entity';
 
 @Injectable()
 export class UserRolesService {
   constructor(
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
-    @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async assignRoleToUser(dto: AssignRoleDto): Promise<UserRole> {
     try {
+      // Check if the role already exists for the user
+      const existingUserRole = await this.userRoleRepository.findOne({
+        where: { user: { id: dto.user_id }, role: dto.role },
+      });
+
+      if (existingUserRole) {
+        throw new BadRequestException(
+          `User with ID ${dto.user_id} already has the role: ${dto.role}`,
+        );
+      }
+
+      // If not, create and save the new role
       const userRole = this.userRoleRepository.create({
         user: { id: dto.user_id },
-        role: { id: dto.role_id },
+        role: dto.role,
       });
+
       return this.userRoleRepository.save(userRole);
     } catch (error) {
       throw new InternalServerErrorException(
@@ -40,12 +50,9 @@ export class UserRolesService {
       if (!validate(userId)) {
         throw new BadRequestException('Invalid UUID format');
       }
-      const customerRole = await this.roleRepository.findOneByOrFail({
-        name: 'customer',
-      });
       const userRole = this.userRoleRepository.create({
         user: { id: userId },
-        role: customerRole,
+        role: UserRoleEnum.CUSTOMER,
       });
       return this.userRoleRepository.save(userRole);
     } catch (error) {
@@ -62,7 +69,6 @@ export class UserRolesService {
       }
       return this.userRoleRepository.find({
         where: { user: { id: userId } },
-        relations: ['roles'],
       });
     } catch (error) {
       throw new NotFoundException(
@@ -74,8 +80,7 @@ export class UserRolesService {
   async removeRoleFromUser(dto: RemoveRoleDto): Promise<UserRole> {
     try {
       const userRole = await this.userRoleRepository.findOneOrFail({
-        where: { user: { id: dto.user_id }, role: { id: dto.role_id } },
-        relations: ['role', 'user'],
+        where: { user: { id: dto.user_id }, role: dto.role },
       });
       return this.userRoleRepository.remove(userRole);
     } catch (error) {

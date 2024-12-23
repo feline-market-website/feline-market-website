@@ -4,7 +4,6 @@ import { CartItemsService } from 'src/cart-items/cart-items.service';
 import { CartsService } from 'src/carts/carts.service';
 import { Module } from '@nestjs/common';
 import { Order } from 'src/orders/entities/order.entity';
-import { Role } from 'src/roles/entities/roles.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { UserProfile } from 'src/user-profiles/entities/user-profile.entity';
@@ -18,7 +17,6 @@ import { UsersService } from './users.service';
   imports: [
     TypeOrmModule.forFeature([
       User,
-      Role,
       UserRole,
       Order,
       UserProfile,
