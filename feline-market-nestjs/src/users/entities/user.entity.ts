@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Cart } from 'src/carts/entities/cart.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { UserProfile } from 'src/user-profiles/entities/user-profile.entity';
 import { UserRole } from 'src/user-roles/entities/user-role.entity';
@@ -46,4 +47,7 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @OneToOne(() => Cart, (cart) => cart.user, { cascade: true })
+  cart: Cart;
 }
