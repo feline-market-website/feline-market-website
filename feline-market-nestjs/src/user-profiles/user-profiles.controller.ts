@@ -7,12 +7,14 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UserProfilesService } from './user-profiles.service';
 import { UserProfile } from './entities/user-profile.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('user-profiles')
 export class UserProfilesController {
@@ -30,6 +32,7 @@ export class UserProfilesController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':userProfileId')
   @HttpCode(HttpStatus.OK)
   async findOne(
