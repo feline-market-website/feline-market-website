@@ -16,6 +16,7 @@ import { UserRolesModule } from './user-roles/user-roles.module';
 import { UsersModule } from './users/users.module';
 import { VendorsModule } from './vendors/vendors.module';
 import { dataSourceOptions } from 'db/data-source';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { dataSourceOptions } from 'db/data-source';
     OrderItemsModule,
     CartsModule,
     CartItemsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
