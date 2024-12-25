@@ -84,13 +84,11 @@ export class UsersService {
   }
 
   async findOneByUsername(username: string): Promise<User> {
-    try {
-      return this.usersRepository.findOneByOrFail({ username: username });
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `An error occurring while find one the user by username: ${error.message}`,
-      );
-    }
+     const user = await this.usersRepository.findOneBy({ username: username });
+     if (!user) {
+      throw new NotFoundException("User not found")
+     }
+     return user;
   }
 
   async findUserWithRoles(id: string): Promise<User> {
