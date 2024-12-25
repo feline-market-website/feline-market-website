@@ -83,6 +83,16 @@ export class UsersService {
     }
   }
 
+  async findOneByUsername(username: string): Promise<User> {
+    try {
+      return this.usersRepository.findOneByOrFail({ username: username });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `An error occurring while find one the user by username: ${error.message}`,
+      );
+    }
+  }
+
   async findUserWithRoles(id: string): Promise<User> {
     if (!validate(id)) {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
