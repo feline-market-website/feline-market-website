@@ -32,7 +32,6 @@ export class UserProfilesController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':userProfileId')
   @HttpCode(HttpStatus.OK)
   async findOne(
