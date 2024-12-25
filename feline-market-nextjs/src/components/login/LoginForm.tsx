@@ -23,7 +23,9 @@ const loginSchema = z.object({
 });
 
 interface ComponentProps {
-  onSubmit: (values: z.infer<typeof loginSchema>) => Promise<Response>;
+  onSubmit: (
+    values: z.infer<typeof loginSchema>
+  ) => Promise<{ access_token: string }>;
 }
 
 const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
@@ -37,24 +39,26 @@ const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
   });
 
   const secondarySubmit = async (values: z.infer<typeof loginSchema>) => {
-    const response = await onSubmit(values);
-    if (!response.ok) {
+    const data = await onSubmit(values);
+    if (!data.access_token) {
       toast({
         variant: "destructive",
-        title: "Login fail",
-        description: `Wrong username or password`,
+        title: "Login Fail",
+        description: `Wrong Username or Password`,
+      });
+    } else {
+      toast({
+        title: "Login Successfully ✅",
+        description: `You login with username: ${values.username}`,
       });
     }
-    toast({
-        title: "Login successfully",
-        description: `you login with username: ${values.username}`,
-      });
   };
 
   return (
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(secondarySubmit)}>
+          <div className="flex flex-col gap-4">
           <FormField
             control={form.control}
             name="username"
@@ -81,7 +85,10 @@ const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
               </FormItem>
             )}
           />
+          </div>
+          <div className="my-8 flex flex-col">
           <Button type="submit">Login</Button>
+          </div>
         </form>
       </Form>
     </div>
