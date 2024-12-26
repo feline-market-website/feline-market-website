@@ -18,7 +18,7 @@ import { User } from './entities/user.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post('/create')
   @HttpCode(HttpStatus.CREATED) // status 201
   async create(
     @Body() createUserDto: CreateUserDto,
