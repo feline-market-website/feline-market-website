@@ -1,4 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,11 +30,24 @@ const NavBar = () => {
       <div className="flex flex-col gap-4 my-auto sm:flex-row">
         {session ? (
           <div className="flex flex-col gap-4 sm:flex-row items-center">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>ME</AvatarFallback>
-            </Avatar>
-            <ShoppingCart/>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>ME</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>Vendor</DropdownMenuItem>
+                <DropdownMenuItem disabled>Admin</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-red-600 font-bold">Logout</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <ShoppingCart />
           </div>
         ) : (
           <div className="flex flex-col gap-1 sm:flex-row">

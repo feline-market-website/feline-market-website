@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import LoginForm from "@/components/login/LoginForm";
+import { cookies } from "next/headers";
 
 const onSubmit = async (values: {
   username: string;
@@ -22,19 +23,35 @@ const onSubmit = async (values: {
       `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: 'include', 
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           username: values.username,
           password: values.password,
         }),
       }
     );
+
     if (!response.ok) {
-      throw new Error
+      throw new Error("Login failed"); 
     }
-    return {success: true, message: "Login successfully"};
-  } catch {
-    return {success: false, message: "Login fail"}
+
+    // Extract the cookie value from the response headers
+    const cookieString = response.headers.get("Set-Cookie");
+    if (cookieString) {
+      const [cookieNameAndValue] = cookieString.split(';');
+      const [cookieName, cookieValue] = cookieNameAndValue.split('=');
+
+      // Set the cookie using the Next.js `cookies` API
+      await (await cookies()).set(cookieName, cookieValue, { httpOnly: true });
+    }
+
+    return { success: true, message: "Login successfully" };
+  } catch (error) {
+    console.error("Login failed:", error);
+    return { success: false, message: "Login failed" };
   }
 };
 
