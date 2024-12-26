@@ -26,7 +26,7 @@ const loginSchema = z.object({
 interface ComponentProps {
   onSubmit: (
     values: z.infer<typeof loginSchema>
-  ) => Promise<{ access_token: string }>;
+  ) => Promise<{ success: boolean, message: string}>;
 }
 
 const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
@@ -44,7 +44,7 @@ const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
     setIsLoading(true);
     try {
       const data = await onSubmit(values);
-      if (!data.access_token) {
+      if (!data.success) {
         toast({
           variant: "destructive",
           title: "Login Fail",

@@ -15,22 +15,27 @@ import LoginForm from "@/components/login/LoginForm";
 const onSubmit = async (values: {
   username: string;
   password: string;
-}): Promise<{ access_token: string }> => {
+}): Promise<{ success: boolean, message: string }> => {
   "use server";
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: values.username,
-        password: values.password,
-      }),
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error
     }
-  );
-  const data = await response.json();
-  return data;
+    return {success: true, message: "Login successfully"};
+  } catch {
+    return {success: false, message: "Login fail"}
+  }
 };
 
 export default function Login() {

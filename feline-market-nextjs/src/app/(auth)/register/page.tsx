@@ -2,7 +2,6 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
@@ -12,24 +11,33 @@ import Link from "next/link";
 import RegisterForm from "@/components/register/RegisterForm";
 
 const onSubmit = async (values: {
+  email: string;
   username: string;
   password: string;
-}): Promise<{ access_token: string }> => {
+  confirmPassword: string;
+}): Promise<{ success: boolean; message: string }> => {
   "use server";
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: values.username,
-        password: values.password,
-      }),
+  console.log(values.email, values.username, values.password)
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/users/create`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          password: values.password,
+        }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error
     }
-  );
-  const data = await response.json();
-  return data;
+    return { success: true, message: "Register successfully" };
+  } catch {
+    return { success: false, message: "An error occurred while register user" };
+  }
 };
 
 export default function Register() {
@@ -48,7 +56,7 @@ export default function Register() {
           <Image src="/logo.png" alt="feline" width={150} height={150} />
         </div>
         <CardContent>
-          <RegisterForm />
+          <RegisterForm callBack={onSubmit}/>
         </CardContent>
         <CardFooter>
           <p>
