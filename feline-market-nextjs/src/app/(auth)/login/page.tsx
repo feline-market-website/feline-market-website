@@ -15,29 +15,42 @@ import LoginForm from "@/components/login/LoginForm";
 const onSubmit = async (values: {
   username: string;
   password: string;
-}): Promise<{ access_token: string }> => {
+}): Promise<{ success: boolean, message: string }> => {
   "use server";
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: values.username,
-        password: values.password,
-      }),
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error
     }
-  );
-  const data = await response.json();
-  return data;
+    return {success: true, message: "Login successfully"};
+  } catch {
+    return {success: false, message: "Login fail"}
+  }
 };
 
 export default function Login() {
   return (
-    <div className="grid grid-cols-2 items-center h-screen">
-      <div className="w-2/3 mx-auto">
-        <Card className="py-5">
+    <div className="flex flex-col-reverse items-center h-screen md:flex-row sm:flex-row">
+      <div className="relative w-full h-1/3 md:h-full md:flex-1">
+        <Image
+          src="/login-cover.jpg"
+          alt="bag"
+          fill
+          className="object-cover md:object-left"
+        />
+      </div>
+      <div className="mx-auto flex flex-col flex-1 p-6">
+        <Card className="py-5 mx-auto max-w-md w-full">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardDescription className="text-lg">
@@ -54,16 +67,13 @@ export default function Login() {
           </CardContent>
           <CardFooter>
             <p>
-              Not have an account?
-              <Button variant={"link"}>
-                <Link href="/register">Register</Link>
-              </Button>
+              Not have an account?{" "}
+              <Link href="/register">
+                <Button variant="link">Register</Button>
+              </Link>
             </p>
           </CardFooter>
         </Card>
-      </div>
-      <div className="relative w-full h-full">
-        <Image src="/login-cover.jpg" alt="bag" fill className="object-cover" />
       </div>
     </div>
   );
