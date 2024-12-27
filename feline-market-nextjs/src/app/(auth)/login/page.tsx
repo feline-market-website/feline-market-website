@@ -38,13 +38,10 @@ const onSubmit = async (values: {
       throw new Error("Login failed");
     }
 
-    // Extract the cookie value from the response headers
     const cookieString = response.headers.get("Set-Cookie");
     if (cookieString) {
       const [cookieNameAndValue] = cookieString.split(';');
       const [cookieName, cookieValue] = cookieNameAndValue.split('=');
-
-      // Set the cookie using the Next.js `cookies` API
       await (await cookies()).set(cookieName, cookieValue, { httpOnly: true });
     }
 
