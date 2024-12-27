@@ -1,13 +1,15 @@
 import NavBar from "@/components/header-footer/navbar/NavBar";
+import getMe from "@/actions/auth/getMeAction";
 
-export default function GeneralLayout({
+export default async function GeneralLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getMe()
   return (
     <section>
-      <NavBar />
+      <NavBar user={user} />
       {children}
     </section>
   );

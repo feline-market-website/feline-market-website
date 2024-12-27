@@ -13,13 +13,17 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { ThemeModes } from "./ThemeModes";
+import { User } from "@/utils/type";
+import { logout } from "@/actions/auth/logoutAction";
 
-const NavBar = () => {
-  const session: boolean = true;
+interface Props {
+  user: User | null;
+}
 
+const NavBar = ({ user }: Props) => {
   return (
-    <div className="flex flex-col justify-between border-b-2 min-w-full px-16 py-2 sm:flex-row">
-      <div className="text-2xl font-bold">Feline Market</div>
+    <div className="flex flex-col justify-between border-b-2 min-w-full px-16 py-2 sm:flex-row items-center">
+      <div className="text-2xl font-bold items-center">Feline Market</div>
       <div className="flex flex-col text-m gap-4 sm:flex-row items-center">
         <Link href="#">Home</Link>
         <Link href="#">Vendors</Link>
@@ -27,8 +31,8 @@ const NavBar = () => {
         <Link href="#">Contact</Link>
         <Input placeholder="..Search" type="text" />
       </div>
-      <div className="flex flex-col gap-4 my-auto sm:flex-row">
-        {session ? (
+      <div className="flex flex-col gap-4 my-auto sm:flex-row items-center">
+        {user ? (
           <div className="flex flex-col gap-4 sm:flex-row items-center">
             <DropdownMenu>
               <DropdownMenuTrigger>
@@ -44,19 +48,28 @@ const NavBar = () => {
                 <DropdownMenuItem>Vendor</DropdownMenuItem>
                 <DropdownMenuItem disabled>Admin</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600 font-bold">Logout</DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-600 font-bold"
+                  onClick={logout}
+                >
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <ShoppingCart />
           </div>
         ) : (
-          <div className="flex flex-col gap-1 sm:flex-row">
-            <Button variant={"ghost"}>
-              <p className="font-bold">Register</p>
-            </Button>
-            <Button variant={"default"}>
-              <p className="font-bold">Login</p>
-            </Button>
+          <div className="flex flex-col gap-1 sm:flex-row items-center">
+            <Link href="/register">
+              <Button variant={"ghost"}>
+                <p className="font-bold">Register</p>
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button variant={"default"}>
+                <p className="font-bold">Login</p>
+              </Button>
+            </Link>
           </div>
         )}
         <ThemeModes />

@@ -14,6 +14,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,6 +33,7 @@ interface ComponentProps {
 const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -55,6 +57,7 @@ const LoginForm: React.FC<ComponentProps> = ({ onSubmit }) => {
           title: "Login Successfully ✅",
           description: `You login with username: ${values.username}`,
         });
+        router.push('/home')
       }
     } catch {
       toast({
