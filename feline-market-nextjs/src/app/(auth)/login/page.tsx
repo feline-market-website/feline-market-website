@@ -11,46 +11,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import LoginForm from "@/components/login/LoginForm";
-import { cookies } from "next/headers";
-
-const onSubmit = async (values: {
-  username: string;
-  password: string;
-}): Promise<{ success: boolean, message: string }> => {
-  "use server";
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
-      {
-        method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: values.username,
-          password: values.password,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    const cookieString = response.headers.get("Set-Cookie");
-    if (cookieString) {
-      const [cookieNameAndValue] = cookieString.split(';');
-      const [cookieName, cookieValue] = cookieNameAndValue.split('=');
-      await (await cookies()).set(cookieName, cookieValue, { httpOnly: true });
-    }
-
-    return { success: true, message: "Login successfully" };
-  } catch (error) {
-    console.error("Login failed:", error);
-    return { success: false, message: "Login failed" };
-  }
-};
+import { loginRequest } from "@/actions/auth/loginRequestAction";
 
 export default function Login() {
   return (
@@ -77,7 +38,7 @@ export default function Login() {
             <Image src="/logo.png" alt="feline" width={150} height={150} />
           </CardHeader>
           <CardContent>
-            <LoginForm onSubmit={onSubmit} />
+            <LoginForm onSubmit={loginRequest} />
           </CardContent>
           <CardFooter>
             <p>

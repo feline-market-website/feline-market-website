@@ -1,19 +1,27 @@
-import { cookies } from "next/headers";
+"use client";
 
-export default async function Home() {
-    const response = await fetch("http://localhost:8000/auth/me", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: (await cookies()).toString(),
-        },
-      });
-      const data = await response.json()
-      console.log(data)
-    return(
-        <div>
-            Home
-        </div>
-    )
+export default function Home() {
+    // useEffect(() => {
+    //     const login = async () => {
+    //         try {
+    //             const response = await axios.post(
+    //                 'http://localhost:8000/auth/login',
+    //                 {
+    //                     username: 'wissarut',
+    //                     password: '@As41035879za',
+    //                 },
+    //                 {
+    //                     withCredentials: true,
+    //                 }
+    //             );
+    //             console.log('Response:', response.data); // แสดงผลลัพธ์จากเซิร์ฟเวอร์
+    //         } catch {
+    //             console.log('error')
+    //         }
+    //     };
+
+    //     login(); // เรียกฟังก์ชัน login
+    // }, []);
+
+    return <div>Home</div>;
 }

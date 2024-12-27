@@ -17,6 +17,9 @@ export class AuthController {
     const access_token = await this.authService.login(req.user);
     res.cookie('access_token', access_token, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 360000,
     });
     return { message: 'Login successfully' };
   }
@@ -25,11 +28,5 @@ export class AuthController {
   @Get('me')
   async findMe(@Request() req: any) {
     return this.authService.findMe(req.username);
-  }
-
-  @UseGuards(LocalAuthGuard)
-  @Post('logout')
-  async logout(@Request() req: any) {
-    return req.logout();
   }
 }
