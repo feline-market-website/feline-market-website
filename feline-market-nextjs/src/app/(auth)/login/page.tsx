@@ -23,7 +23,7 @@ const onSubmit = async (values: {
       `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/login`,
       {
         method: "POST",
-        credentials: 'include', 
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json",
         },
@@ -35,7 +35,7 @@ const onSubmit = async (values: {
     );
 
     if (!response.ok) {
-      throw new Error("Login failed"); 
+      throw new Error("Login failed");
     }
 
     // Extract the cookie value from the response headers
