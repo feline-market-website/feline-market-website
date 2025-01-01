@@ -7,6 +7,7 @@ export default async function getMe(): Promise<User | null> {
     try {
         const cookieString = (await cookies()).toString();
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/auth/me`, {
+            cache: 'no-store',
             method: "GET",
             credentials: "include",
             headers: {

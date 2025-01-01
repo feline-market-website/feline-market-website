@@ -25,10 +25,10 @@ const NavBar = ({ user }: Props) => {
     <div className="flex flex-col justify-between border-b-2 min-w-full px-16 py-2 sm:flex-row items-center">
       <div className="text-2xl font-bold items-center">Feline Market</div>
       <div className="flex flex-col text-m gap-4 sm:flex-row items-center">
-        <Link href="#">Home</Link>
-        <Link href="#">Vendors</Link>
-        <Link href="#">About</Link>
-        <Link href="#">Contact</Link>
+        <Link href="/home">Home</Link>
+        <Link href="/vendor">Vendors</Link>
+        <Link href="/about">About</Link>
+        <Link href="/contact">Contact</Link>
         <Input placeholder="..Search" type="text" />
       </div>
       <div className="flex flex-col gap-4 my-auto sm:flex-row items-center">
@@ -37,14 +37,14 @@ const NavBar = ({ user }: Props) => {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src={ user.user_profile.avatar_url || "https://github.com/shadcn.png"} />
                   <AvatarFallback>ME</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuLabel>{user.username}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <Link href={`profile/${user.id}`}>
+                <Link href={`/profile/${user.id}`}>
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem>Vendor</DropdownMenuItem>
