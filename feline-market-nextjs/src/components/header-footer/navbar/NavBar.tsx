@@ -42,9 +42,11 @@ const NavBar = ({ user }: Props) => {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{user.username}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <Link href={`profile/${user.id}`}>
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>Vendor</DropdownMenuItem>
                 <DropdownMenuItem disabled>Admin</DropdownMenuItem>
                 <DropdownMenuSeparator />
