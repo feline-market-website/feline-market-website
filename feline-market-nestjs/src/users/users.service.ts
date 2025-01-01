@@ -61,7 +61,7 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     try {
-      return this.usersRepository.find({ relations: ['roles.role'] });
+      return this.usersRepository.find({ relations: ['roles'] });
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurring while find all users: ${error.message}`,
@@ -99,7 +99,7 @@ export class UsersService {
     try {
       return this.usersRepository.findOneOrFail({
         where: { id },
-        relations: ['roles.role'],
+        relations: ['roles'],
       });
     } catch (error) {
       throw new NotFoundException(
