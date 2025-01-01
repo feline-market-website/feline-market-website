@@ -27,6 +27,7 @@ export class AuthService {
   }
   
   async findMe(username: string) {
-    return this.usersService.findOneByUsername(username);
+    const data = await this.usersService.findOneByUsername(username);
+    return data
   }
 }

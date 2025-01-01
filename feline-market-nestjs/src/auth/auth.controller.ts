@@ -27,6 +27,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async findMe(@Request() req: any) {
-    return this.authService.findMe(req.username);
+    return this.authService.findMe(req.user.username);
   }
 }
