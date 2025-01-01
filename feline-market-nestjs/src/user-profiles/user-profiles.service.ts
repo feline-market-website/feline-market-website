@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -35,21 +36,36 @@ export class UserProfilesService {
     }
   }
 
+  async getUserProfileByUserId(userId: string): Promise<UserProfile> {
+    if (!validate(userId)) {
+      throw new BadRequestException(`Invalid UUID format`);
+    }
+
+    const userProfile = await this.userProfileRepository.findOne({
+      where: {user: {id: userId}},
+      relations: ['user'],
+    })
+
+    if (!userProfile) {
+      throw new NotFoundException("user profile not found")
+    }
+    
+    return userProfile;
+  }
+
   async getUserProfileById(userProfileId: string): Promise<UserProfile> {
-    try {
       if (!validate(userProfileId)) {
         throw new BadRequestException(`Invalid UUID format`);
       }
 
-      return this.userProfileRepository.findOneOrFail({
+      const userProfile = await this.userProfileRepository.findOne({
         where: { id: userProfileId },
         relations: ['user'],
       });
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `An error occurred while retrieving user profile by id: ${error.message}`,
-      );
-    }
+      if (!userProfile) {
+        throw new NotFoundException("User profile not found")
+      }
+      return userProfile
   }
 
   async updateUserProfile(

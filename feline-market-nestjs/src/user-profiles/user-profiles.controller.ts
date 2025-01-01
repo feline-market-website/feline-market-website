@@ -43,6 +43,19 @@ export class UserProfilesController {
     };
   }
 
+  @Get(':userId/user-id')
+  @HttpCode(HttpStatus.OK)
+  async findOneByUserId(
+    @Param('userId') userId: string,
+  ): Promise<{ message: string; data: UserProfile }> {
+    const userProfile =
+      await this.userProfilesService.getUserProfileByUserId(userId);
+    return {
+      message: `User profile has retrieved successfully`,
+      data: userProfile,
+    };
+  }
+
   @Patch(':userProfileId')
   async update(
     @Param('userProfileId') userProfileId: string,
