@@ -23,7 +23,7 @@ export const loginRequest = async (values: {
     );
 
     if (!response.ok) {
-      throw new Error("Login failed");
+      throw new Error;
     }
 
     const cookieString = response.headers.get("Set-Cookie");
@@ -39,8 +39,7 @@ export const loginRequest = async (values: {
     }
 
     return { success: true, message: "Login successfully" };
-  } catch (error) {
-    console.error("Login failed:", error);
+  } catch{
     return { success: false, message: "Login failed" };
   }
 };
