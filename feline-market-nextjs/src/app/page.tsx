@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col h-screen items-center justify-center sm:flex-row md:flex-row">
-      <div className="flex flex-col flex-1 gap-7 ml-10">
+    <div className="flex flex-col h-screen items-center justify-center sm:flex-row md:flex-row sm:ml-52  ml-0">
+      <div className="flex flex-col flex-1 gap-7">
         <div className="text-5xl font-bold">
           Your Gateway to Unique Shopping Experiences!
         </div>
