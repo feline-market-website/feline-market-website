@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-
   return (
     <div className="flex flex-col h-screen items-center justify-center sm:flex-row md:flex-row">
       <div className="flex flex-col flex-1 gap-7 ml-10">
@@ -18,9 +17,12 @@ export default function Home() {
           products in a growing community.
         </div>
         <div className="flex flex-col gap-5 my-2 sm:flex-row">
-          <Button className="font-bold" size={"lg"}>
-            <Link href="/home">Home</Link>
-          </Button>
+          <Link href="/home">
+            <Button className="font-bold" size={"lg"}>
+              Home
+            </Button>
+          </Link>
+
           <Button className="font-bold" size={"lg"} variant="ghost">
             <Link
               href="https://github.com/feline-market-website/feline-market-website"
