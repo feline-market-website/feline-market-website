@@ -25,7 +25,6 @@ export default async function Users() {
     }
   };
   const users = await getUsers();
-  console.log(users.data)
 
   return (
     <div className="container mx-auto py-10">

@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -175,7 +174,7 @@ export const columns: ColumnDef<User>[] = [
               Make changes to the user roles here. Click save when you done.
               </DialogDescription>
             </DialogHeader>
-            <AssignRoleForm roles={roles}/>
+            <AssignRoleForm roles={roles} userId={user.id}/>
           </DialogContent>
         </Dialog>
       );

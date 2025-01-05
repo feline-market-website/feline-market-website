@@ -12,8 +12,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2 } from "lucide-react";
 import { UserRole } from "@/utils/type";
+import { updateUserRole } from "@/actions/user-profile/updateUserRoleAction";
 import { useForm } from "react-hook-form";
+import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -40,25 +45,43 @@ const FormSchema = z.object({
 
 interface Props {
   roles: UserRole[];
+  userId: string;
 }
 
-export const AssignRoleForm: React.FC<Props> = ({ roles }) => {
+export const AssignRoleForm: React.FC<Props> = ({ roles, userId }) => {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
   const userRoles = roles.map((item) => item.role);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      items: userRoles
+      items: userRoles,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-  const selectedRoles = items.filter((item) => data.items.includes(item.id));
-  
-  selectedRoles.forEach((role) => {
-    console.log(`ID: ${role.id}, Role: ${role.label}`);
-  });
-
-  console.log("Selected Roles:", selectedRoles);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      setIsLoading(true);
+      const beforeUpdate = userRoles;
+      const afterUpdate = data.items;
+      const response = await updateUserRole(userId, beforeUpdate, afterUpdate);
+      if (response.success) {
+        toast({
+          title: "Update role successfully✅",
+          description: `Roles have updated to user`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Update role fail",
+          description: response.message,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+      router.refresh()
+    }
   }
 
   return (
@@ -112,7 +135,14 @@ export const AssignRoleForm: React.FC<Props> = ({ roles }) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Update</Button>
+        {isLoading ? (
+          <Button disabled>
+            <Loader2 className="animate-spin" />
+            Please wait
+          </Button>
+        ) : (
+          <Button type="submit">Update</Button>
+        )}
       </form>
     </Form>
   );
