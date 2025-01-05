@@ -1,6 +1,15 @@
 "use client";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -10,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { ArrowUpDown } from "lucide-react";
+import { AssignRoleForm } from "./AssignRoleForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -95,13 +105,17 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "roles",
-    header: () => {return <div className="text-center">Roles</div>},
+    header: () => {
+      return <div className="text-center">Roles</div>;
+    },
     cell: ({ row }) => {
       const roles = row.getValue("roles") as UserRole[];
       return (
         <div className="flex flex-col gap-1 justify items-center">
           {roles.map((role) => (
-            <div key={role.role}><Badge variant={'outline'}> {role.role} </Badge></div>
+            <div key={role.role}>
+              <Badge variant={"outline"}> {role.role} </Badge>
+            </div>
           ))}
         </div>
       );
@@ -128,28 +142,42 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const user = row.original;
+      const roles = row.getValue("roles") as UserRole[];
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(user.id)}
+              >
+                Copy payment ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DialogTrigger>
+              <DropdownMenuItem>Update roles</DropdownMenuItem>
+              </DialogTrigger>
+              <DropdownMenuItem>View user details</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Update roles</DialogTitle>
+              <DialogDescription>
+              Make changes to the user roles here. Click save when you done.
+              </DialogDescription>
+            </DialogHeader>
+            <AssignRoleForm roles={roles}/>
+          </DialogContent>
+        </Dialog>
       );
     },
   },
