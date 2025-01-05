@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { CreateVendorDto } from './dto/create-vendor.dto';
@@ -42,6 +43,13 @@ export class VendorsController {
   ): Promise<{ message: string; data: Vendor }> {
     const vendor = await this.vendorsService.findOneVendorByVendorId(vendorId);
     return { message: `Vendor has retrieved successfully`, data: vendor };
+  }
+
+  @Get(":userId/user-id")
+  @HttpCode(HttpStatus.OK)
+  async findOneByUserId(@Param('userId') userId: string): Promise<{message: string, data: Vendor}> {
+    const vendor = await this.vendorsService.findOneVendorByUserId(userId);
+    return {message: `Vendor has retrieved successfully`, data: vendor}
   }
 
   @Patch(':vendorId')

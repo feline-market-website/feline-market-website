@@ -51,6 +51,20 @@ export class VendorsService {
     }
   }
 
+  async findOneVendorByUserId(userId: string): Promise<Vendor> {
+    if (!validate(userId)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
+    const vendor = await this.vendorRepository.findOne({
+      where: {user: {id: userId}}
+    })
+
+    if (!vendor) {
+      throw new NotFoundException("Vendor not found")
+    }
+    return vendor;
+  }
+
   async findAllVendors(): Promise<Vendor[]> {
     try {
       return this.vendorRepository.find({
