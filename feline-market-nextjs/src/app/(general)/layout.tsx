@@ -10,7 +10,7 @@ export default async function GeneralLayout({
   return (
     <section>
       <NavBar user={user} />
-      <div className="mx-16 my-5">{children}</div>
+      <div className="mx-20 sm:mx-36 my-5">{children}</div>
     </section>
   );
 }

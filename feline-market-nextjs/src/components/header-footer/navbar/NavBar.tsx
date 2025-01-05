@@ -22,7 +22,7 @@ interface Props {
 
 const NavBar = ({ user }: Props) => {
   return (
-    <div className="flex flex-col justify-between border-b-2 min-w-full px-16 py-2 sm:flex-row items-center">
+    <div className="flex flex-col justify-between border-b-2 px-36 py-3 sm:flex-row items-center">
       <div className="text-2xl font-bold items-center">Feline Market</div>
       <div className="flex flex-col text-m gap-4 sm:flex-row items-center">
         <Link href="/home">Home</Link>

@@ -15,7 +15,7 @@ export default async function getMe(): Promise<User | null> {
             }
         });
         if (!response.ok) {
-            throw new Error
+            throw new Error("Session not found")
         }
         const data = await response.json();
         return data;
