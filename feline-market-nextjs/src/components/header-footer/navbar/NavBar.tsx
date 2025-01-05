@@ -26,7 +26,7 @@ const NavBar = ({ user }: Props) => {
       <div className="text-2xl font-bold items-center">Feline Market</div>
       <div className="flex flex-col text-m gap-4 sm:flex-row items-center">
         <Link href="/home">Home</Link>
-        <Link href="/vendor">Vendors</Link>
+        <Link href="/vendors">Vendors</Link>
         <Link href="/about">About</Link>
         <Link href="/contact">Contact</Link>
         <Input placeholder="..Search" type="text" />
@@ -37,7 +37,12 @@ const NavBar = ({ user }: Props) => {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
-                  <AvatarImage src={ user.user_profile.avatar_url || "https://github.com/shadcn.png"} />
+                  <AvatarImage
+                    src={
+                      user.user_profile.avatar_url ||
+                      "https://github.com/shadcn.png"
+                    }
+                  />
                   <AvatarFallback>ME</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -47,8 +52,10 @@ const NavBar = ({ user }: Props) => {
                 <Link href={`/profile/${user.id}`}>
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>Vendor</DropdownMenuItem>
-                <DropdownMenuItem disabled>Admin</DropdownMenuItem>
+                <Link href="/vendor">
+                  <DropdownMenuItem>Vendor</DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem disabled={true}>Admin</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-red-600 font-bold"
