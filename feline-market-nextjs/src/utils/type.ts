@@ -23,3 +23,12 @@ export interface UserRole {
     id: string;
     role: string;
 }
+
+export interface VendorType {
+    id: string;
+    name: string;
+    description: string;
+    logo_url: string;
+    created_at: string;
+    updated_at: string;
+}
