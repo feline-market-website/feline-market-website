@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 
 import VendorCreateForm from "@/components/vendor/VendorCreateForm";
+import { createVendorRequest } from "@/actions/vendor/createVendorRequestAction";
 import getMe from "@/actions/auth/getMeAction";
 import { redirect } from "next/navigation";
 
@@ -31,6 +32,7 @@ export default async function Vendor() {
 
   const response = await getVendorByUserId(user.id);
   const hasVendor = response.ok
+  const vendor = await response.json();
 
   return (
     <div>
@@ -51,10 +53,10 @@ export default async function Vendor() {
           <CardContent>
             {!hasVendor ? (
               <div>
-                <VendorCreateForm />
+                <VendorCreateForm callBack={createVendorRequest} userId={user.id}/>
               </div>
             ) : (
-              <div>Have vendor</div>
+              <div>{vendor.name}</div>
             )}
           </CardContent>
         </Card>

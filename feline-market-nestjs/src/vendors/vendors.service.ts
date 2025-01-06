@@ -21,19 +21,20 @@ export class VendorsService {
   ) {}
 
   async createVendor(dto: CreateVendorDto): Promise<Vendor> {
-    try {
-      const user = await this.userRepository.findOneByOrFail({
+      const user = await this.userRepository.findOneBy({
         id: dto.user_id,
       });
+      if (!user) {
+        throw new NotFoundException("User not found")
+      }
+      try {
       const vendor = this.vendorRepository.create({
         ...dto,
         user,
       });
       return this.vendorRepository.save(vendor);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `An error occurred while creating a vendor: ${error.message}`,
-      );
+    } catch {
+      throw new InternalServerErrorException("An error occurred while create vendor")
     }
   }
 
