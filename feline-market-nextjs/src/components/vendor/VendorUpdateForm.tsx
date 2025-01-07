@@ -47,6 +47,7 @@ export default function VendorUpdateForm({
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,6 +79,7 @@ export default function VendorUpdateForm({
       }
     } finally {
       setIsLoading(false);
+      setIsEditable(false);
       router.refresh();
     }
   }
@@ -95,6 +97,7 @@ export default function VendorUpdateForm({
                 <Input
                   placeholder="Vendor name ex. Tiktok shop"
                   type="text"
+                  disabled={!isEditable}
                   {...field}
                 />
               </FormControl>
@@ -113,7 +116,12 @@ export default function VendorUpdateForm({
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="description" type="" {...field} />
+                <Input
+                  placeholder="description"
+                  type=""
+                  {...field}
+                  disabled={!isEditable}
+                />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -130,20 +138,50 @@ export default function VendorUpdateForm({
             <FormItem>
               <FormLabel>Logo URL</FormLabel>
               <FormControl>
-                <Input placeholder="url" type="text" {...field} />
+                <Input
+                  placeholder="url"
+                  type="text"
+                  {...field}
+                  disabled={!isEditable}
+                />
               </FormControl>
               <FormDescription>URL to your logo.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        {isLoading ? (
-          <Button type="submit" disabled={true}>
-            Loading
-          </Button>
-        ) : (
-          <Button type="submit">Submit</Button>
-        )}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {isLoading ? (
+            <Button type="submit" disabled={true}>
+              Loading
+            </Button>
+          ) : (
+            <Button type="submit" disabled={!isEditable}>
+              Update
+            </Button>
+          )}
+          {isEditable ? (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setIsEditable(false);
+              }}
+            >
+              Back
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setIsEditable(true);
+              }}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
       </form>
     </Form>
   );
