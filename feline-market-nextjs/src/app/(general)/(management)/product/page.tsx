@@ -1,3 +1,4 @@
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -9,8 +10,19 @@ import {
 import { FolderKanban, Package } from "lucide-react";
 
 import { CreateProductDialog } from "@/components/product/CreateProductDialog";
+import ProductDataTable from "@/components/product/ProductDataTable";
+import getMe from "@/actions/auth/getMeAction";
+import { getUserProducts } from "@/actions/product/getUserProductsAction";
+import { redirect } from "next/navigation";
 
 export default async function Product() {
+  const user = await getMe();
+  if (!user) {
+    redirect("/login");
+  }
+  const products = await getUserProducts(user.id);
+  console.log(products.data)
+
   return (
     <Card>
       <CardHeader>
@@ -28,7 +40,17 @@ export default async function Product() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <CreateProductDialog/>
+        <CreateProductDialog />
+        {!products.data ? (
+          <Alert>
+            <AlertTitle>No product found</AlertTitle>
+            <AlertDescription>
+              You must create product at least 1 to use this table
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <ProductDataTable products={products.data}/>
+        )}
       </CardContent>
       <CardFooter>Footer</CardFooter>
     </Card>

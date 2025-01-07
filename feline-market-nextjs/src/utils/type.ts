@@ -29,6 +29,16 @@ export interface VendorType {
     name: string;
     description: string;
     logo_url: string;
-    created_at: string;
-    updated_at: string;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface Product {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    created_at: Date;
+    updated_at: Date;
 }

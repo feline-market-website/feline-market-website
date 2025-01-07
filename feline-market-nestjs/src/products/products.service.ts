@@ -8,7 +8,7 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Vendor } from 'src/vendors/entities/vendor.entity';
 import { validate } from 'uuid';
@@ -67,6 +67,27 @@ export class ProductsService {
         `An error occurred while retrieving the product: ${error.message}`,
       );
     }
+  }
+
+  async findProductsByUserId(userId: string): Promise<Product[]> {
+    if (!validate(userId)) {
+      throw new BadRequestException('User id not found')
+    }
+    return this.productRepository.find({
+      where: {vendor: {user: {id: userId}}}
+    })
+  }
+
+  async findUserProductsByName(userId: string, name: string): Promise<Product[]> {
+    if (!validate(userId)) {
+      throw new BadRequestException('User id not found')
+    }
+    return this.productRepository.find({
+      where: {
+        vendor: {user: {id: userId}},
+        name: ILike(`%${name}%`),
+      }
+    })
   }
 
   async updateProduct(

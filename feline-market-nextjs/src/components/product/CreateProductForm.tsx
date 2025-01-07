@@ -19,6 +19,7 @@ import getMe from "@/actions/auth/getMeAction";
 import { getVendorByUserId } from "@/actions/vendor/getVendorByUserIdAction";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -42,51 +43,56 @@ const formSchema = z.object({
 });
 
 export default function CreateProductForm() {
-  const router = useRouter()
-  const {toast} = useToast()
+  const router = useRouter();
+  const { toast } = useToast();
+  const [IsLoading, SetIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        name: "",
-        description: "",
-        price: 0,
-        stock: 0,
-    }
+      name: "",
+      description: "",
+      price: 0,
+      stock: 0,
+    },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      SetIsLoading(true);
       const user = await getMe();
 
-    if (!user) {
-      throw new Error("User not found")
-    }
-    const vendor = await getVendorByUserId(user.id)
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const vendor = await getVendorByUserId(user.id);
 
-    if (!vendor.data) {
-      throw new Error("Vendor not found")
-    }
-    console.log(values)
-    const response = await createProductRequest(vendor.data.id, values)
-    if (!response.success) {
-      toast({
-        variant:"destructive",
-        title: "Product has created fail",
-        description: response.message,
-      })
-    } else {
-      toast({
-        variant:"default",
-        title: "Product has created successfully",
-        description: "You can complete your product images later",
-      })
-    }
+      if (!vendor.data) {
+        throw new Error("Vendor not found");
+      }
+      console.log(values);
+      const response = await createProductRequest(vendor.data.id, values);
+      if (!response.success) {
+        toast({
+          variant: "destructive",
+          title: "Product has created fail",
+          description: response.message,
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: "Product has created successfully",
+          description: "You can complete your product images later",
+        });
+      }
     } catch (error) {
       toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Product has created fail",
         description: (error as Error).message,
-      })
-      router.push('/login')
+      });
+      router.push("/login");
+    } finally {
+      SetIsLoading(false);
+      router.refresh();
     }
   }
 
@@ -161,7 +167,11 @@ export default function CreateProductForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        {IsLoading ? (
+          <Button disabled>Loading</Button>
+        ) : (
+          <Button type="submit">Submit</Button>
+        )}
       </form>
     </Form>
   );

@@ -15,11 +15,9 @@ export const CreateProductDialog = async () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div>
-          <Button size="icon">
-            <CirclePlus />
-          </Button>
-        </div>
+        <Button size="icon">
+          <CirclePlus />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -28,7 +26,7 @@ export const CreateProductDialog = async () => {
             Please type your product information
           </DialogDescription>
         </DialogHeader>
-        <CreateProductForm/>
+        <CreateProductForm />
       </DialogContent>
     </Dialog>
   );
