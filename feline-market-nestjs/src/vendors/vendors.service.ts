@@ -21,35 +21,42 @@ export class VendorsService {
   ) {}
 
   async createVendor(dto: CreateVendorDto): Promise<Vendor> {
-      const user = await this.userRepository.findOneBy({
-        id: dto.user_id,
-      });
-      if (!user) {
-        throw new NotFoundException("User not found")
-      }
-      try {
+    const user = await this.userRepository.findOneBy({
+      id: dto.user_id,
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    try {
       const vendor = this.vendorRepository.create({
         ...dto,
         user,
       });
       return this.vendorRepository.save(vendor);
     } catch {
-      throw new InternalServerErrorException("An error occurred while create vendor")
+      throw new InternalServerErrorException(
+        'An error occurred while create vendor',
+      );
     }
   }
 
   async findOneVendorByVendorId(vendorId: string): Promise<Vendor> {
     if (!validate(vendorId)) {
-      throw new BadRequestException('Invalid UUID format');
+      throw new BadRequestException(
+        `Invalid UUID format for vendorId: ${vendorId}`,
+      );
     }
-    try {
-      return await this.vendorRepository.findOneOrFail({
-        where: { id: vendorId },
-        relations: ['user'],
-      });
-    } catch {
+
+    const vendor = await this.vendorRepository.findOne({
+      where: { id: vendorId },
+      relations: ['user'],
+    });
+
+    if (!vendor) {
       throw new NotFoundException(`Vendor with ID ${vendorId} not found`);
     }
+
+    return vendor;
   }
 
   async findOneVendorByUserId(userId: string): Promise<Vendor> {
@@ -57,11 +64,11 @@ export class VendorsService {
       throw new BadRequestException('Invalid UUID format');
     }
     const vendor = await this.vendorRepository.findOne({
-      where: {user: {id: userId}}
-    })
+      where: { user: { id: userId } },
+    });
 
     if (!vendor) {
-      throw new NotFoundException("Vendor not found")
+      throw new NotFoundException('Vendor not found');
     }
     return vendor;
   }
@@ -82,13 +89,16 @@ export class VendorsService {
     vendorId: string,
     dto: UpdateVendorDto,
   ): Promise<Vendor> {
+    const vendor = await this.findOneVendorByVendorId(vendorId);
+
+    Object.assign(vendor, dto);
+
     try {
-      const vendor = await this.findOneVendorByVendorId(vendorId);
-      Object.assign(vendor, dto);
-      return this.vendorRepository.save(vendor);
+      return await this.vendorRepository.save(vendor);
     } catch (error) {
+      console.error("Vendor service error: ",error)
       throw new InternalServerErrorException(
-        `An error occurred while update vendor by id: ${error.message}`,
+        `An internal sever error while updated vendor`,
       );
     }
   }

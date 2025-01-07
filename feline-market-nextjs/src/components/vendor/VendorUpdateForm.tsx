@@ -22,14 +22,16 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Props {
-  callBack: (data: {
-    user_id: string;
-    name: string;
-    description: string;
-    logo_url: string;
-  }) => Promise<{ success: boolean; message: string }>;
-  userId: string;
-  vendorData: VendorType
+  callBack: (
+    vendorId: string,
+    updateData: {
+      name: string;
+      description: string;
+      logo_url: string;
+    }
+  ) => Promise<{ success: boolean; message: string }>;
+  vendorId: string;
+  vendorData: VendorType;
 }
 const formSchema = z.object({
   name: z.string().min(5).max(50),
@@ -37,7 +39,11 @@ const formSchema = z.object({
   logo_url: z.string(),
 });
 
-export default function VendorUpdateForm({ callBack, userId, vendorData }: Props) {
+export default function VendorUpdateForm({
+  callBack,
+  vendorId,
+  vendorData,
+}: Props) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -53,21 +59,20 @@ export default function VendorUpdateForm({ callBack, userId, vendorData }: Props
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true);
-      const data = {
+      const updateData = {
         ...values,
-        user_id: userId,
       };
-      const result = await callBack(data);
+      const result = await callBack(vendorId, updateData);
       if (result.success) {
         toast({
           variant: "default",
-          title: "Vendor has created successfully",
-          description: "You can manage your vendor and products now",
+          title: "Vendor has updated successfully",
+          description: "You can updated vendor many time as your want",
         });
       } else {
         toast({
           variant: "destructive",
-          title: "Fail to create the vendor",
+          title: "Fail to update the vendor",
           description: result.message,
         });
       }
@@ -133,7 +138,9 @@ export default function VendorUpdateForm({ callBack, userId, vendorData }: Props
           )}
         />
         {isLoading ? (
-          <Button type="submit" disabled={true}>Loading</Button>
+          <Button type="submit" disabled={true}>
+            Loading
+          </Button>
         ) : (
           <Button type="submit">Submit</Button>
         )}

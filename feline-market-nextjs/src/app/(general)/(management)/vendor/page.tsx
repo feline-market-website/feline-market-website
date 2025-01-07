@@ -12,6 +12,7 @@ import VendorUpdateForm from "@/components/vendor/VendorUpdateForm";
 import { createVendorRequest } from "@/actions/vendor/createVendorRequestAction";
 import getMe from "@/actions/auth/getMeAction";
 import { redirect } from "next/navigation";
+import { updateVendorRequest } from "@/actions/vendor/updateVendorRequestAction";
 
 const getVendorByUserId = async (userId: string) => {
   const response = await fetch(
@@ -59,7 +60,7 @@ export default async function Vendor() {
                 <VendorCreateForm callBack={createVendorRequest} userId={user.id}/>
               </div>
             ) : (
-              <div><VendorUpdateForm callBack={createVendorRequest} userId={user.id} vendorData={vendor}/></div>
+              <div><VendorUpdateForm callBack={updateVendorRequest} vendorId={vendor.id} vendorData={vendor}/></div>
             )}
           </CardContent>
         </Card>
