@@ -36,10 +36,12 @@ export const UserSideNav: React.FC<Props> = async ({ user }) => {
           </Avatar>
           <div>
             <p className="text-xl font-bold">{user.username}</p>
-            <p className="flex text-m items-center">
-              <PencilLine size={17.5} />
-              Edit your profile
-            </p>
+            <Link href={`/profile/${user.id}`}>
+              <p className="flex text-m items-center">
+                <PencilLine size={17.5} />
+                Edit profile
+              </p>
+            </Link>
           </div>
         </div>
 
@@ -73,7 +75,6 @@ export const UserSideNav: React.FC<Props> = async ({ user }) => {
           <ReceiptText />
           My Purchase
         </Button>
-
       </CardContent>
     </Card>
   );
