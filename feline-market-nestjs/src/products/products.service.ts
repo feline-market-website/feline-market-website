@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -22,18 +23,22 @@ export class ProductsService {
   ) {}
 
   async createProduct(dto: CreateProductDto): Promise<Product> {
+    const vendor = await this.vendorRepository.findOneBy({
+      id: dto.vendor_id,
+    });
+    if (!vendor) {
+      throw new NotFoundException("Vendor Not found")
+    }
     try {
-      const vendor = await this.vendorRepository.findOneByOrFail({
-        id: dto.vendor_id,
-      });
       const product = this.productRepository.create({
         ...dto,
         vendor,
       });
       return this.productRepository.save(product);
     } catch (error) {
+      console.error("Product service error: ", error.message)
       throw new InternalServerErrorException(
-        `An error occurred while creating product: ${error.message}`,
+        `An internal server error occurred while creating product`,
       );
     }
   }

@@ -61,10 +61,12 @@ export const UserSideNav: React.FC<Props> = async ({ user }) => {
           </Button>
         </Link>
 
-        <Button className="w-full" variant={"outline"}>
-          <PackageSearch />
-          My Product
-        </Button>
+        <Link href="/product">
+          <Button className="w-full" variant={"outline"}>
+            <PackageSearch />
+            My Product
+          </Button>
+        </Link>
 
         <Button className="w-full" variant={"outline"}>
           <BaggageClaim />

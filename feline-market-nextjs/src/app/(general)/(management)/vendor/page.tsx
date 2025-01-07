@@ -12,20 +12,9 @@ import { VendorType } from "@/utils/type";
 import VendorUpdateForm from "@/components/vendor/VendorUpdateForm";
 import { createVendorRequest } from "@/actions/vendor/createVendorRequestAction";
 import getMe from "@/actions/auth/getMeAction";
+import { getVendorByUserId } from "@/actions/vendor/getVendorByUserIdAction";
 import { redirect } from "next/navigation";
 import { updateVendorRequest } from "@/actions/vendor/updateVendorRequestAction";
-
-const getVendorByUserId = async (userId: string) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/vendors/${userId}/user-id`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    }
-  );
-  return response;
-};
 
 export default async function Vendor() {
   const user = await getMe();
@@ -35,9 +24,7 @@ export default async function Vendor() {
   }
 
   const response = await getVendorByUserId(user.id);
-  const hasVendor = response.ok;
-  const responseJson = await response.json();
-  const vendor: VendorType = responseJson.data;
+  const vendor: VendorType | undefined = response.data;
 
   return (
     <div>
@@ -50,20 +37,24 @@ export default async function Vendor() {
           <CardHeader>
             <div className="flex flex-col sm:flex-row items-center gap-5">
               <div>
-                <Image
-                  src={vendor.logo_url}
-                  alt="alt"
-                  width={60}
-                  height={60}
-                  className="rounded-full object-cover"
-                ></Image>
+                {vendor ? (
+                  <Image
+                    src={vendor.logo_url}
+                    alt="alt"
+                    width={60}
+                    height={60}
+                    className="rounded-full object-cover"
+                  ></Image>
+                ) : (
+                  <></>
+                )}
               </div>
               <div>
                 <CardTitle className="font-bold text-2xl">
-                  {!hasVendor ? "Create your vendor 🏪" : `${vendor.name}`}
+                  {!vendor ? "Create your vendor 🏪" : `${vendor.name}`}
                 </CardTitle>
                 <CardDescription className="text-xl">
-                  {!hasVendor
+                  {!vendor
                     ? "Start owning your store"
                     : `${vendor.description}`}
                 </CardDescription>
@@ -71,7 +62,7 @@ export default async function Vendor() {
             </div>
           </CardHeader>
           <CardContent>
-            {!hasVendor ? (
+            {!vendor ? (
               <div>
                 <VendorCreateForm
                   callBack={createVendorRequest}
