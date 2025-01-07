@@ -37,14 +37,14 @@ export class ProductsController {
     return { message: 'Products have retrieved successfully', data: products };
   }
 
-  @Get(":userId/user-id")
+  @Get(":userId/user-id/:name/name")
   @HttpCode(HttpStatus.OK)
   async findAllByUserId(@Param('userId') userId: string, @Param('name') name: string): Promise<{ message: string; data: Product[] }> {
     const products = await this.productsService.findUserProductsByName(userId, name);
     return { message: 'Products have retrieved successfully', data: products };
   }
 
-  @Get(":userId/user-id/:name/name")
+  @Get(":userId/user-id")
   @HttpCode(HttpStatus.OK)
   async findAllFromName(@Param('userId') userId: string): Promise<{ message: string; data: Product[] }> {
     const products = await this.productsService.findProductsByUserId(userId);

@@ -21,7 +21,6 @@ export default async function Product() {
     redirect("/login");
   }
   const products = await getUserProducts(user.id);
-  console.log(products.data)
 
   return (
     <Card>
@@ -49,7 +48,7 @@ export default async function Product() {
             </AlertDescription>
           </Alert>
         ) : (
-          <ProductDataTable products={products.data}/>
+          <ProductDataTable initialProducts={products.data} userId={user.id}/>
         )}
       </CardContent>
       <CardFooter>Footer</CardFooter>

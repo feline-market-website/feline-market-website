@@ -1,3 +1,5 @@
+"use server"
+
 import { Product } from "@/utils/type";
 
 export const getUserProductByName = async (
@@ -13,7 +15,7 @@ export const getUserProductByName = async (
         credentials: "include",
       }
     );
-    if (response.ok) {
+    if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message);
     }
