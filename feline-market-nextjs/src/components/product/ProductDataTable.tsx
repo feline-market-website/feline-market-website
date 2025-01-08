@@ -123,7 +123,7 @@ export default function ProductDataTable({ initialProducts, userId }: Props) {
             ))}
           </TableBody>
         </Table>
-        <div className="flex justify-center items-center my-4">
+        <div className="flex justify-center items-center my-4 gap-2">
         <Button
         variant={"secondary"}
           onClick={() => handlePagination(currentPage - 1)}
