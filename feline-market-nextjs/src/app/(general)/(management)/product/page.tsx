@@ -12,7 +12,7 @@ import { FolderKanban, Package } from "lucide-react";
 import { CreateProductDialog } from "@/components/product/CreateProductDialog";
 import ProductDataTable from "@/components/product/ProductDataTable";
 import getMe from "@/actions/auth/getMeAction";
-import { getUserProducts } from "@/actions/product/getUserProductsAction";
+import { getUserProductPagination } from "@/actions/product/getUserProductPagination";
 import { redirect } from "next/navigation";
 
 export default async function Product() {
@@ -20,7 +20,8 @@ export default async function Product() {
   if (!user) {
     redirect("/login");
   }
-  const products = await getUserProducts(user.id);
+  const productsResponse = await getUserProductPagination(user.id, 1, 10)
+  const products = productsResponse.responseData
 
   return (
     <Card>
@@ -40,7 +41,7 @@ export default async function Product() {
       </CardHeader>
       <CardContent>
         <CreateProductDialog />
-        {!products.data ? (
+        {!products ? (
           <Alert>
             <AlertTitle>No product found</AlertTitle>
             <AlertDescription>
@@ -48,7 +49,7 @@ export default async function Product() {
             </AlertDescription>
           </Alert>
         ) : (
-          <ProductDataTable initialProducts={products.data} userId={user.id}/>
+          <ProductDataTable initialProducts={products} userId={user.id}/>
         )}
       </CardContent>
       <CardFooter>Footer</CardFooter>

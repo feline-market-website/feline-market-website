@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -12,18 +13,30 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 
+import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Product } from "@/utils/type";
 import { getUserProductByName } from "@/actions/product/getUserProductByNameAction";
+import { getUserProductPagination } from "@/actions/product/getUserProductPagination";
 import { useToast } from "@/hooks/use-toast";
 
 interface Props {
-  initialProducts: Product[];
+  initialProducts: {
+    data: Product[];
+    total: number;
+    currentPage: number;
+    totalPage: number;
+  };
   userId: string;
 }
 
 export default function ProductDataTable({ initialProducts, userId }: Props) {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>(initialProducts.data);
+  const [currentPage, setCurrentPage] = useState<number>(
+    initialProducts.currentPage
+  );
+  const [total, setTotal] = useState<number>(initialProducts.total);
+  const [totalPage, setTotalPage] = useState<number>(initialProducts.totalPage);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
 
@@ -49,10 +62,28 @@ export default function ProductDataTable({ initialProducts, userId }: Props) {
     if (search.trim() !== "") {
       fetchProducts();
     } else {
-      setProducts(initialProducts);
+      setProducts(initialProducts.data);
     }
   }, [search, userId, initialProducts, toast]);
 
+  const handlePagination = async (page: number) => {
+    try {
+      const response = await getUserProductPagination(userId, page, 10);
+      if (!response.responseData) {
+        throw new Error(response.message);
+      }
+      setProducts(response.responseData.data);
+      setTotal(response.responseData.total);
+      setCurrentPage(response.responseData.currentPage);
+      setTotalPage(response.responseData.totalPage);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "An error occurred while changing page",
+        description: (error as Error).message || "Internal server error",
+      });
+    }
+  };
   return (
     <Card>
       <CardHeader>
@@ -64,7 +95,7 @@ export default function ProductDataTable({ initialProducts, userId }: Props) {
       </CardHeader>
       <CardContent>
         <Table>
-          <TableCaption>A list of products</TableCaption>
+          <TableCaption>Currently page {currentPage} of {totalPage} | {total} products</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Id</TableHead>
@@ -92,6 +123,24 @@ export default function ProductDataTable({ initialProducts, userId }: Props) {
             ))}
           </TableBody>
         </Table>
+        <div className="flex justify-center items-center my-4">
+        <Button
+        variant={"secondary"}
+          onClick={() => handlePagination(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft />
+          Prev
+        </Button>
+        <Button
+        variant={"secondary"}
+          onClick={() => handlePagination(currentPage + 1)}
+          disabled={currentPage === totalPage}
+        >
+          Next
+          <ChevronRight />
+        </Button>
+        </div>
       </CardContent>
     </Card>
   );

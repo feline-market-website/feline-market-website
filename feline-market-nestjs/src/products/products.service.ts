@@ -27,7 +27,7 @@ export class ProductsService {
       id: dto.vendor_id,
     });
     if (!vendor) {
-      throw new NotFoundException("Vendor Not found")
+      throw new NotFoundException('Vendor Not found');
     }
     try {
       const product = this.productRepository.create({
@@ -36,7 +36,7 @@ export class ProductsService {
       });
       return this.productRepository.save(product);
     } catch (error) {
-      console.error("Product service error: ", error.message)
+      console.error('Product service error: ', error.message);
       throw new InternalServerErrorException(
         `An internal server error occurred while creating product`,
       );
@@ -71,23 +71,61 @@ export class ProductsService {
 
   async findProductsByUserId(userId: string): Promise<Product[]> {
     if (!validate(userId)) {
-      throw new BadRequestException('User id not found')
+      throw new BadRequestException('User id not found');
     }
     return this.productRepository.find({
-      where: {vendor: {user: {id: userId}}}
-    })
+      where: { vendor: { user: { id: userId } } },
+    });
   }
 
-  async findUserProductsByName(userId: string, name: string): Promise<Product[]> {
+  async findUserProductsPagination(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    data: Product[];
+    total: number;
+    currentPage: number;
+    totalPage: number;
+  }> {
     if (!validate(userId)) {
-      throw new BadRequestException('User id not found')
+      throw new BadRequestException('valid uuid format');
+    }
+    try {
+      const skip = (page - 1) * limit;
+      const [data, total] = await this.productRepository.findAndCount({
+        where: { vendor: { user: { id: userId } } },
+        skip,
+        take: limit,
+        order: {
+          created_at: 'DESC',
+        },
+      });
+      return {
+        data,
+        total,
+        currentPage: page,
+        totalPage: Math.ceil(total / limit),
+      };
+    } catch (error) {
+      console.log("error find user's products pagination");
+      throw new InternalServerErrorException("error find user's products pagination");
+    }
+  }
+
+  async findUserProductsByName(
+    userId: string,
+    name: string,
+  ): Promise<Product[]> {
+    if (!validate(userId)) {
+      throw new BadRequestException('User id not found');
     }
     return this.productRepository.find({
       where: {
-        vendor: {user: {id: userId}},
+        vendor: { user: { id: userId } },
         name: ILike(`%${name}%`),
-      }
-    })
+      },
+    });
   }
 
   async updateProduct(

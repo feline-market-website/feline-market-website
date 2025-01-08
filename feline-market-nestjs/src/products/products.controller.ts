@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -37,16 +38,47 @@ export class ProductsController {
     return { message: 'Products have retrieved successfully', data: products };
   }
 
-  @Get(":userId/user-id/:name/name")
+  @Get('search')
   @HttpCode(HttpStatus.OK)
-  async findAllByUserId(@Param('userId') userId: string, @Param('name') name: string): Promise<{ message: string; data: Product[] }> {
-    const products = await this.productsService.findUserProductsByName(userId, name);
+  async findUserProductPagination(
+    @Query('userId') userId: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Promise<{
+    message: string;
+    data: {
+      data: Product[];
+      total: number;
+      currentPage: number;
+      totalPage: number;
+    };
+  }> {
+    const products = await this.productsService.findUserProductsPagination(
+      userId,
+      page,
+      limit,
+    );
     return { message: 'Products have retrieved successfully', data: products };
   }
 
-  @Get(":userId/user-id")
+  @Get(':userId/user-id/:name/name')
   @HttpCode(HttpStatus.OK)
-  async findAllFromName(@Param('userId') userId: string): Promise<{ message: string; data: Product[] }> {
+  async findAllByUserId(
+    @Param('userId') userId: string,
+    @Param('name') name: string,
+  ): Promise<{ message: string; data: Product[] }> {
+    const products = await this.productsService.findUserProductsByName(
+      userId,
+      name,
+    );
+    return { message: 'Products have retrieved successfully', data: products };
+  }
+
+  @Get(':userId/user-id')
+  @HttpCode(HttpStatus.OK)
+  async findAllFromName(
+    @Param('userId') userId: string,
+  ): Promise<{ message: string; data: Product[] }> {
     const products = await this.productsService.findProductsByUserId(userId);
     return { message: 'Products have retrieved successfully', data: products };
   }
