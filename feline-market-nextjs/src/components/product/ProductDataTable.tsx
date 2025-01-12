@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, TableOfContents } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -104,6 +104,7 @@ export default function ProductDataTable({ initialProducts, userId }: Props) {
               <TableHead>Stock</TableHead>
               <TableHead>Create</TableHead>
               <TableHead>Update</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -118,6 +119,9 @@ export default function ProductDataTable({ initialProducts, userId }: Props) {
                 </TableCell>
                 <TableCell>
                   {new Date(product.updated_at).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="flex justify-center">
+                <TableOfContents size={16} />
                 </TableCell>
               </TableRow>
             ))}
